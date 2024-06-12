@@ -37,8 +37,8 @@
         --white: #ffffff;
         --light-gray: #e5e5e5;
         --gray: #a3a3a3;
-        --green: #339f33;
-        --yellow: #c2a334;
+        --green: #3eb23e;
+        --yellow: #d3b342;
         --blue: #a5c9ff;
         --blue-accent: #668bc3;
       }
@@ -268,9 +268,6 @@
 
         text-transform: uppercase;
       }
-      div#input:has(#archive-dialog[open]) .attempt-row {
-        opacity: 0.4;
-      }
 
       .attempt-letter {
         width: 3rem;
@@ -282,6 +279,9 @@
         border: 1px solid var(--light-gray);
         font-size: 1.5rem;
         font-weight: bold;
+      }
+      .attempt-row.fade-in .attempt-letter {
+        animation: fade-in 100ms ease-out 1 forwards;
       }
 
       #archive-dialog {
@@ -295,7 +295,7 @@
         left: 50%;
         transform: translate(-50%, -50%);
 
-        background-color: var(--light-gray);
+        background-color: var(--blue);
 
         padding: 2rem;
         border-radius: 0.5rem;
@@ -372,17 +372,9 @@
         gap: 0.5rem;
       }
 
-      @keyframes pulse {
-        0% {
-          opacity: 0;
-        }
-
-        50% {
-          opacity: 1;
-        }
-
-        100% {
-          opacity: 0;
+      @keyframes fade-in {
+        from {
+          background-color: transparent;
         }
       }
     </style>
@@ -443,7 +435,6 @@
             <div class="attempt-letter"></div>
           </div>
           <div id="attempt-5" class="attempt-row">
-            <div class="attempt-letter"></div>
             <div class="attempt-letter"></div>
             <div class="attempt-letter"></div>
             <div class="attempt-letter"></div>
@@ -977,6 +968,10 @@
           const attempt = GameState.attempts[GameState.activeAttempt];
 
           if (attempt && attempt.length === GameState.length && GameDict.get(GameState.length)?.includes(attempt)) {
+            const Binding = Bindings.Word[`Attempt${GameState.activeAttempt + 1}`];
+            Binding.classList.add("fade-in");
+            setTimeout(() => Binding.classList.remove("fade-in"), 100);
+
             GameState.activeAttempt = GameState.activeAttempt + 1;
 
             if (GameState.activeAttempt >= Constants.Attempts || GameState.attempts.includes(GameState.word))
@@ -1029,7 +1024,12 @@
           if (e.key === "Backspace") onDelete();
 
           for (const { Element } of Bindings.Interactive.Letters) {
-            if (e.key.toLowerCase() === Element.dataset.letter) {
+            if (e.key.toLowerCase() === Element.dataset.letter && !(
+              e.altKey ||
+              e.ctrlKey ||
+              e.metaKey ||
+              e.shiftKey
+            )) {
               onLetter(Element.dataset.letter);
             }
           }

@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;900&display=swap"
       rel="stylesheet"
     />
 
@@ -341,6 +341,7 @@
         color: var(--black);
         cursor: pointer;
         font-size: 1.125rem;
+        font-weight: 500;
       }
       button.letter:disabled {
         opacity: 0.4;
@@ -945,7 +946,7 @@
               <strong>Today</strong>
             </span>
             ${
-              game.archived
+              GameHistory[AppState.now].archived
                 ? `<svg width="15" height="16" viewBox="0 0 15 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12.6562 4.85416L12.2656 11.4992C12.2446 11.8573 12.0874 12.1939 11.8264 12.44C11.5653 12.6861 11.22 12.823 10.8613 12.8229H4.13875C3.77998 12.823 3.43472 12.6861 3.17364 12.44C2.91257 12.1939 2.75542 11.8573 2.73438 11.4992L2.34375 4.85416M6.25 7.19791H8.75M2.10938 4.85416H12.8906C13.2787 4.85416 13.5938 4.53916 13.5938 4.15103V3.21353C13.5938 2.82541 13.2787 2.51041 12.8906 2.51041H2.10938C1.72125 2.51041 1.40625 2.82541 1.40625 3.21353V4.15103C1.40625 4.53916 1.72125 4.85416 2.10938 4.85416Z"  stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>`

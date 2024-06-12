@@ -1,6 +1,6 @@
 {
-  "name": "Bee, a words game",
-  "short_name": "Bee",
+  "name": "Word, a words game",
+  "short_name": "Word",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
@@ -13,7 +13,7 @@
       "type": "image/png"
     }
   ],
-  "theme_color": "#FFD339",
+  "theme_color": "#a5c9ff",
   "background_color": "#FFFFFF",
   "display": "standalone",
   "description": "A words game",

@@ -7,7 +7,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <meta name="theme-color" content="#FFD339" />
+    <meta name="theme-color" content="#a5c9ff" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -33,12 +33,22 @@
 
       :root {
         --black: #000000;
+        --black-on-blue: #000000;
         --white: #ffffff;
         --light-gray: #e5e5e5;
         --gray: #a3a3a3;
-        --green: #39d339;
-        --yellow: #ffd339;
-        --yellow-text: #ffc93e;
+        --green: #339f33;
+        --yellow: #c2a334;
+        --blue: #a5c9ff;
+        --blue-accent: #668bc3;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --black: #e2e2e2;
+          --white: #1c1c1c;
+          --light-gray: #4c4c4c;
+        }
       }
 
       body {
@@ -51,6 +61,10 @@
         padding: 0;
 
         font-size: 1rem;
+
+        background-color: var(--white);
+        color: var(--black);
+        stroke: var(--black);
       }
 
       h1,
@@ -65,6 +79,9 @@
         font-size: 1.375rem;
         font-weight: 900;
         line-height: 2rem;
+      }
+      nav h1 {
+        color: var(--black-on-blue);
       }
 
       .dialog {
@@ -81,6 +98,10 @@
         max-height: 100vh;
 
         font-size: 0.75rem;
+
+        background-color: var(--white);
+        color: var(--black);
+        stroke: var(--black);
       }
       .dialog[open] {
         display: flex;
@@ -127,6 +148,7 @@
         justify-content: space-between;
       }
       .button:disabled {
+        cursor: not-allowed;
         opacity: 0.4;
       }
       .button.small {
@@ -142,6 +164,9 @@
       .strong {
         font-weight: bold;
       }
+      .light-gray {
+        background-color: var(--light-gray);
+      }
       .gray {
         background-color: var(--gray);
       }
@@ -150,6 +175,16 @@
       }
       .green {
         background-color: var(--green);
+      }
+      .blue {
+        background-color: var(--blue);
+        color: var(--black-on-blue);
+        stroke: var(--black-on-blue);
+      }
+      .accent {
+        background-color: var(--blue-accent);
+        color: var(--black-on-blue);
+        stroke: var(--black-on-blue);
       }
       .yellow {
         background-color: var(--yellow);
@@ -198,7 +233,7 @@
       }
 
       nav.nav {
-        background-color: var(--yellow);
+        background-color: var(--blue);
       }
 
       section#game {
@@ -244,7 +279,7 @@
         display: grid;
         place-content: center;
         
-        border: 1px solid var(--black);
+        border: 1px solid var(--light-gray);
         font-size: 1.5rem;
         font-weight: bold;
       }
@@ -349,7 +384,7 @@
     <main id="container">
       <nav class="nav">
         <div class="nav-buttons left">
-          <button id="overview-button" class="white button">
+          <button id="overview-button" class="accent button">
             <svg
               width="20"
               height="20"
@@ -359,7 +394,7 @@
             >
               <path
                 d="M1.875 10L9.33667 2.5375C9.70333 2.17166 10.2967 2.17166 10.6625 2.5375L18.125 10M3.75 8.125V16.5625C3.75 17.08 4.17 17.5 4.6875 17.5H8.125V13.4375C8.125 12.92 8.545 12.5 9.0625 12.5H10.9375C11.455 12.5 11.875 12.92 11.875 13.4375V17.5H15.3125C15.83 17.5 16.25 17.08 16.25 16.5625V8.125M6.875 17.5H13.75"
-                stroke="black"
+                
                 stroke-width="1.5"
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -378,10 +413,8 @@
             <div class="attempt-letter"></div>
             <div class="attempt-letter"></div>
             <div class="attempt-letter"></div>
-            <div class="attempt-letter"></div>
           </div>
           <div id="attempt-2" class="attempt-row">
-            <div class="attempt-letter"></div>
             <div class="attempt-letter"></div>
             <div class="attempt-letter"></div>
             <div class="attempt-letter"></div>
@@ -394,10 +427,8 @@
             <div class="attempt-letter"></div>
             <div class="attempt-letter"></div>
             <div class="attempt-letter"></div>
-            <div class="attempt-letter"></div>
           </div>
           <div id="attempt-4" class="attempt-row">
-            <div class="attempt-letter"></div>
             <div class="attempt-letter"></div>
             <div class="attempt-letter"></div>
             <div class="attempt-letter"></div>
@@ -413,7 +444,6 @@
             <div class="attempt-letter"></div>
           </div>
           <div id="attempt-6" class="attempt-row">
-            <div class="attempt-letter"></div>
             <div class="attempt-letter"></div>
             <div class="attempt-letter"></div>
             <div class="attempt-letter"></div>
@@ -467,7 +497,7 @@
               >
                 <path
                   d="M10 8.625L11.875 10.5M11.875 10.5L13.75 12.375M11.875 10.5L13.75 8.625M11.875 10.5L10 12.375M7.85 16.475L2.5375 11.1625C2.36194 10.9867 2.26333 10.7484 2.26333 10.5C2.26333 10.2516 2.36194 10.0133 2.5375 9.8375L7.85 4.525C8.02584 4.34917 8.265 4.25 8.51334 4.25H16.25C16.7473 4.25 17.2242 4.44754 17.5758 4.79917C17.9275 5.15081 18.125 5.62772 18.125 6.125V14.875C18.125 15.3723 17.9275 15.8492 17.5758 16.2008C17.2242 16.5525 16.7473 16.75 16.25 16.75H8.51334C8.265 16.75 8.02584 16.6508 7.85 16.475Z"
-                  stroke="black"
+                  
                   stroke-width="1.5"
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -482,7 +512,7 @@
     <dialog id="overview-dialog" class="dialog">
       <div class="nav">
         <h1>Overview</h1>
-        <button id="overview-close-button" class="gray button">
+        <button id="overview-close-button" class="light-gray button">
           <svg
             width="20"
             height="20"
@@ -492,7 +522,7 @@
           >
             <path
               d="M5 15L15 5M5 5L15 15"
-              stroke="black"
+              
               stroke-width="1.5"
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -512,7 +542,7 @@
             >
               <path
                 d="M6.1875 2.75V4.8125M15.8125 2.75V4.8125M2.75 17.1875V6.875C2.75 6.32799 2.9673 5.80339 3.35409 5.41659C3.74089 5.0298 4.26549 4.8125 4.8125 4.8125H17.1875C17.7345 4.8125 18.2591 5.0298 18.6459 5.41659C19.0327 5.80339 19.25 6.32799 19.25 6.875V17.1875M2.75 17.1875C2.75 17.7345 2.9673 18.2591 3.35409 18.6459C3.74089 19.0327 4.26549 19.25 4.8125 19.25H17.1875C17.7345 19.25 18.2591 19.0327 18.6459 18.6459C19.0327 18.2591 19.25 17.7345 19.25 17.1875M2.75 17.1875V10.3125C2.75 9.76549 2.9673 9.24089 3.35409 8.85409C3.74089 8.4673 4.26549 8.25 4.8125 8.25H17.1875C17.7345 8.25 18.2591 8.4673 18.6459 8.85409C19.0327 9.24089 19.25 9.76549 19.25 10.3125V17.1875M11 11.6875H11.0073V11.6948H11V11.6875ZM11 13.75H11.0073V13.7573H11V13.75ZM11 15.8125H11.0073V15.8198H11V15.8125ZM8.9375 13.75H8.94483V13.7573H8.9375V13.75ZM8.9375 15.8125H8.94483V15.8198H8.9375V15.8125ZM6.875 13.75H6.88233V13.7573H6.875V13.75ZM6.875 15.8125H6.88233V15.8198H6.875V15.8125ZM13.0625 11.6875H13.0698V11.6948H13.0625V11.6875ZM13.0625 13.75H13.0698V13.7573H13.0625V13.75ZM13.0625 15.8125H13.0698V15.8198H13.0625V15.8125ZM15.125 11.6875H15.1323V11.6948H15.125V11.6875ZM15.125 13.75H15.1323V13.7573H15.125V13.75Z"
-                stroke="black"
+                
                 stroke-width="1.5"
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -533,7 +563,7 @@
             >
               <path
                 d="M18.375 11C18.375 9.87067 18.3328 8.75142 18.2485 7.64317C18.1836 6.76514 17.8055 5.93963 17.1829 5.31708C16.5604 4.69453 15.7349 4.31637 14.8568 4.25151C12.6221 4.08291 10.3779 4.08291 8.14317 4.25151C7.26513 4.31637 6.43963 4.69453 5.81707 5.31708C5.19452 5.93963 4.81636 6.76514 4.7515 7.64317C4.73592 7.84484 4.72217 8.04742 4.70933 8.25001M18.375 11L21.125 8.25001M18.375 11L15.625 8.25001M4.625 11C4.625 12.1293 4.66717 13.2486 4.7515 14.3568C4.81636 15.2349 5.19452 16.0604 5.81707 16.6829C6.43963 17.3055 7.26513 17.6836 8.14317 17.7485C10.3779 17.9172 12.6221 17.9172 14.8568 17.7485C15.7349 17.6836 16.5604 17.3055 17.1829 16.6829C17.8055 16.0604 18.1836 15.2349 18.2485 14.3568C18.2641 14.1552 18.2778 13.9526 18.2907 13.75M4.625 11L7.375 13.75M4.625 11L1.875 13.75"
-                stroke="black"
+                
                 stroke-width="1.5"
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -543,7 +573,7 @@
           </div>
           <span>Want more than one game a day? Try a random game!</span>
           <div id="overview-random-games-container" class="two-pane-pane-inner">
-            <button id="overview-new-random-game" class="small gray button">
+            <button id="overview-new-random-game" class="small light-gray button">
               <span>New random game</span>
               <svg
                 width="15"
@@ -554,7 +584,7 @@
               >
                 <path
                   d="M7.5 2.8125V12.1875M12.1875 7.5H2.8125"
-                  stroke="black"
+                  
                   stroke-linecap="round"
                   stroke-linejoin="round"
                 />
@@ -845,7 +875,7 @@
             key === AppState.now || key.includes("+")
               ? innerHTML
               : (innerHTML += `<button data-game-key=${key} class="small ${
-                  AppState.currentGameKey === key ? "yellow" : "gray"
+                  AppState.currentGameKey === key ? "blue" : "light-gray"
                 } button">
                     <span>
                       <strong>
@@ -855,13 +885,13 @@
                     ${
                       game.archived
                         ? `<svg width="15" height="16" viewBox="0 0 15 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12.6562 4.85416L12.2656 11.4992C12.2446 11.8573 12.0874 12.1939 11.8264 12.44C11.5653 12.6861 11.22 12.823 10.8613 12.8229H4.13875C3.77998 12.823 3.43472 12.6861 3.17364 12.44C2.91257 12.1939 2.75542 11.8573 2.73438 11.4992L2.34375 4.85416M6.25 7.19791H8.75M2.10938 4.85416H12.8906C13.2787 4.85416 13.5938 4.53916 13.5938 4.15103V3.21353C13.5938 2.82541 13.2787 2.51041 12.8906 2.51041H2.10938C1.72125 2.51041 1.40625 2.82541 1.40625 3.21353V4.15103C1.40625 4.53916 1.72125 4.85416 2.10938 4.85416Z" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12.6562 4.85416L12.2656 11.4992C12.2446 11.8573 12.0874 12.1939 11.8264 12.44C11.5653 12.6861 11.22 12.823 10.8613 12.8229H4.13875C3.77998 12.823 3.43472 12.6861 3.17364 12.44C2.91257 12.1939 2.75542 11.8573 2.73438 11.4992L2.34375 4.85416M6.25 7.19791H8.75M2.10938 4.85416H12.8906C13.2787 4.85416 13.5938 4.53916 13.5938 4.15103V3.21353C13.5938 2.82541 13.2787 2.51041 12.8906 2.51041H2.10938C1.72125 2.51041 1.40625 2.82541 1.40625 3.21353V4.15103C1.40625 4.53916 1.72125 4.85416 2.10938 4.85416Z"  stroke-linecap="round" stroke-linejoin="round"/>
                           </svg>`
                         : ""
                     }
                   </button>`),
           `<button data-game-key=${AppState.now} class="small ${
-            AppState.currentGameKey === AppState.now ? "yellow" : "gray"
+            AppState.currentGameKey === AppState.now ? "blue" : "light-gray"
           } button">
             <span>
               <strong>Today</strong>
@@ -869,7 +899,7 @@
             ${
               game.archived
                 ? `<svg width="15" height="16" viewBox="0 0 15 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12.6562 4.85416L12.2656 11.4992C12.2446 11.8573 12.0874 12.1939 11.8264 12.44C11.5653 12.6861 11.22 12.823 10.8613 12.8229H4.13875C3.77998 12.823 3.43472 12.6861 3.17364 12.44C2.91257 12.1939 2.75542 11.8573 2.73438 11.4992L2.34375 4.85416M6.25 7.19791H8.75M2.10938 4.85416H12.8906C13.2787 4.85416 13.5938 4.53916 13.5938 4.15103V3.21353C13.5938 2.82541 13.2787 2.51041 12.8906 2.51041H2.10938C1.72125 2.51041 1.40625 2.82541 1.40625 3.21353V4.15103C1.40625 4.53916 1.72125 4.85416 2.10938 4.85416Z" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12.6562 4.85416L12.2656 11.4992C12.2446 11.8573 12.0874 12.1939 11.8264 12.44C11.5653 12.6861 11.22 12.823 10.8613 12.8229H4.13875C3.77998 12.823 3.43472 12.6861 3.17364 12.44C2.91257 12.1939 2.75542 11.8573 2.73438 11.4992L2.34375 4.85416M6.25 7.19791H8.75M2.10938 4.85416H12.8906C13.2787 4.85416 13.5938 4.53916 13.5938 4.15103V3.21353C13.5938 2.82541 13.2787 2.51041 12.8906 2.51041H2.10938C1.72125 2.51041 1.40625 2.82541 1.40625 3.21353V4.15103C1.40625 4.53916 1.72125 4.85416 2.10938 4.85416Z"  stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>`
                 : ""
             }
@@ -884,7 +914,7 @@
             !key.includes("+")
               ? innerHTML
               : (innerHTML += `<button data-game-key=${key} class="small ${
-                  key === AppState.currentGameKey ? "yellow" : "gray"
+                  key === AppState.currentGameKey ? "blue" : "light-gray"
                 } button">
                   <span>
                     <strong>
@@ -894,7 +924,7 @@
                   ${
                     game.archived
                       ? `<svg width="15" height="16" viewBox="0 0 15 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M12.6562 4.85416L12.2656 11.4992C12.2446 11.8573 12.0874 12.1939 11.8264 12.44C11.5653 12.6861 11.22 12.823 10.8613 12.8229H4.13875C3.77998 12.823 3.43472 12.6861 3.17364 12.44C2.91257 12.1939 2.75542 11.8573 2.73438 11.4992L2.34375 4.85416M6.25 7.19791H8.75M2.10938 4.85416H12.8906C13.2787 4.85416 13.5938 4.53916 13.5938 4.15103V3.21353C13.5938 2.82541 13.2787 2.51041 12.8906 2.51041H2.10938C1.72125 2.51041 1.40625 2.82541 1.40625 3.21353V4.15103C1.40625 4.53916 1.72125 4.85416 2.10938 4.85416Z" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M12.6562 4.85416L12.2656 11.4992C12.2446 11.8573 12.0874 12.1939 11.8264 12.44C11.5653 12.6861 11.22 12.823 10.8613 12.8229H4.13875C3.77998 12.823 3.43472 12.6861 3.17364 12.44C2.91257 12.1939 2.75542 11.8573 2.73438 11.4992L2.34375 4.85416M6.25 7.19791H8.75M2.10938 4.85416H12.8906C13.2787 4.85416 13.5938 4.53916 13.5938 4.15103V3.21353C13.5938 2.82541 13.2787 2.51041 12.8906 2.51041H2.10938C1.72125 2.51041 1.40625 2.82541 1.40625 3.21353V4.15103C1.40625 4.53916 1.72125 4.85416 2.10938 4.85416Z"  stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>`
                       : ""
                   }
@@ -944,6 +974,11 @@
 
             if (GameState.activeAttempt >= Constants.Attempts || GameState.attempts.includes(GameState.word))
               GameState.archived = true;
+          } else {   
+            Bindings.Word[`Attempt${GameState.activeAttempt + 1}`].animate(
+              new Array(9).fill(0).map((_, index) => ({ transform: `translate(${~~(index/2) % 2 === 0 ? "" : "-"}${index % 2 === 0 ? "0" : "0.25"}rem)` })),
+              { duration: 360, easing: "linear", fill: "forwards" },
+            )
           }
 
           updateDisplayState();
@@ -1010,6 +1045,7 @@
           } else {
             switchGame(key);
             Bindings.Dialogs.OverviewDialog.close();
+          Bindings.Control.OverviewButton.Element.blur();
           }
         })
       );
@@ -1032,7 +1068,6 @@
         "click"
       );
       updateBinding(
-        /** @todo */
         Bindings.Control.OverviewNewRandomGame,
         async () => {
           const lengthString = prompt("How long should the word be? Choose any number greater than 4.", "5");

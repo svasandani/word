@@ -283,6 +283,9 @@
       .attempt-row.fade-in .attempt-letter {
         animation: fade-in 100ms ease-out 1 forwards;
       }
+      .attempt-row.pulse .attempt-letter.latest {
+        animation: pulse 100ms ease-in-out 1 forwards;
+      }
 
       #archive-dialog {
         appearance: none;
@@ -303,6 +306,9 @@
 
       div#buttons {
         height: min-content;
+        width: 100%;
+        max-width: 30rem;
+        justify-self: center;
         padding-bottom: 2rem;
 
         display: grid;
@@ -345,6 +351,9 @@
       :where(button.letter) {
         background-color: var(--light-gray);
       }
+      :where(button.letter:active) {
+        opacity: 0.75;
+      }
 
       button#letter-Enter {
         font-size: 0.85rem;
@@ -375,6 +384,20 @@
       @keyframes fade-in {
         from {
           background-color: transparent;
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+
+        50% {
+          transform: scale(1.05);
+        }
+
+        100% {
+          transform: scale(1);
         }
       }
     </style>
@@ -874,9 +897,9 @@
           let innerHTML = "";
 
           for (let j = 0; j < GameState.length; j++) {
-            innerHTML += `<div class="attempt-letter">${
-              attempt?.charAt(j) ?? ""
-            }</div>`;
+            innerHTML += `<div class="attempt-letter ${
+              attempt?.length === j + 1 ? "latest" : ""
+            }">${attempt?.charAt(j) ?? ""}</div>`;
           }
 
           Bindings.Word[`Attempt${i + 1}`].innerHTML = innerHTML;
@@ -1014,13 +1037,11 @@
               GameState.archived = true;
           } else {
             Bindings.Word[`Attempt${GameState.activeAttempt + 1}`].animate(
-              new Array(9)
-                .fill(0)
-                .map((_, index) => ({
-                  transform: `translate(${~~(index / 2) % 2 === 0 ? "" : "-"}${
-                    index % 2 === 0 ? "0" : "0.25"
-                  }rem)`,
-                })),
+              new Array(9).fill(0).map((_, index) => ({
+                transform: `translate(${~~(index / 2) % 2 === 0 ? "" : "-"}${
+                  index % 2 === 0 ? "0" : "0.25"
+                }rem)`,
+              })),
               { duration: 360, easing: "linear", fill: "forwards" }
             );
           }
@@ -1047,6 +1068,11 @@
           const attempt = GameState.attempts[GameState.activeAttempt];
 
           if (!attempt || attempt.length < GameState.length) {
+            const Binding =
+              Bindings.Word[`Attempt${GameState.activeAttempt + 1}`];
+            Binding.classList.add("pulse");
+            setTimeout(() => Binding.classList.remove("pulse"), 100);
+
             GameState.attempts[GameState.activeAttempt] =
               (attempt ?? "") + letter;
           }
@@ -1136,7 +1162,11 @@
             "5"
           );
 
-          if (!lengthString || Number.isNaN(parseInt(lengthString))) {
+          if (
+            !lengthString ||
+            Number.isNaN(parseInt(lengthString)) ||
+            parseInt(lengthString) < 4
+          ) {
             alert("That isn't a valid length!");
           } else {
             const length = parseInt(lengthString);

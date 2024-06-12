@@ -21,7 +21,7 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <title>Play Bee</title>
+    <title>Play Word</title>
     <style>
       *,
       *::before,
@@ -34,7 +34,9 @@
       :root {
         --black: #000000;
         --white: #ffffff;
-        --gray: #e5e5e5;
+        --light-gray: #e5e5e5;
+        --gray: #a3a3a3;
+        --green: #39d339;
         --yellow: #ffd339;
         --yellow-text: #ffc93e;
       }
@@ -146,6 +148,9 @@
       .white {
         background-color: var(--white);
       }
+      .green {
+        background-color: var(--green);
+      }
       .yellow {
         background-color: var(--yellow);
       }
@@ -196,149 +201,111 @@
         background-color: var(--yellow);
       }
 
-      header#score {
-        font-size: 0.75rem;
-        width: 100%;
-        padding: 1rem;
-
-        display: flex;
-        flex-flow: row nowrap;
-        align-items: center;
-        justify-content: space-between;
-      }
-
       section#game {
         width: 100%;
+        height: 100%;
         flex-grow: 1;
 
         display: grid;
-        grid-template-rows: 2fr auto 3fr;
+        grid-template-rows: auto 1fr;
       }
 
       div#input {
+        padding: 2rem;
+
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 0.5rem;
+
+        overflow: scroll;
         position: relative;
+      }
+      
+      .attempt-row {
+        height: min-content;
 
-        padding-bottom: 1rem;
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin: 0 auto;
+
+        text-transform: uppercase;
+      }
+      div#input:has(#archive-dialog[open]) .attempt-row {
+        opacity: 0.4;
       }
 
-      span#feedback {
-        position: absolute;
-        left: 50%;
-        bottom: 3.5rem;
+      .attempt-letter {
+        width: 3rem;
+        height: 3rem;
 
-        transform: translateX(-50%);
-
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
-
-      span#current-word {
-        position: absolute;
-        left: 50%;
-        bottom: 1rem;
-
-        transform: translateX(-50%);
-
-        font-size: 2rem;
-        line-height: 2rem;
+        display: grid;
+        place-content: center;
+        
+        border: 1px solid var(--black);
+        font-size: 1.5rem;
         font-weight: bold;
-
-        max-width: calc(100% - 2rem);
-        height: 2rem;
-        overflow: visible;
-        overflow-wrap: break-word;
-        text-align: center;
       }
-      span#current-word > span:last-child {
-        position: relative;
-      }
-      span#current-word > span:last-child::after {
-        content: "";
 
-        height: 2.5rem;
-        width: 0.2rem;
-        background-color: var(--yellow);
+      #archive-dialog {
+        appearance: none;
+        border: none;
+        outline: none;
+        margin: 0;
 
         position: absolute;
-        right: -0.3rem;
         top: 50%;
-        transform: translateY(-50%);
+        left: 50%;
+        transform: translate(-50%, -50%);
 
-        animation: pulse 1s step-end infinite;
+        background-color: var(--light-gray);
+
+        padding: 2rem;
+        border-radius: 0.5rem;
       }
 
       div#buttons {
-        --height: 6rem;
-        --width: calc(var(--height) * 1.1547);
+        height: min-content;
+        padding-bottom: 2rem;
 
-        position: relative;
-        padding: 2rem 0;
-        height: calc(var(--height) * 4);
+        display: grid;
+        grid-template-rows: repeat(3, 1fr);
+        gap: 0.375rem;
+      }
+
+      .button-row {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: center;
+        gap: 0.375rem;
       }
 
       button.letter {
-        --gap: 0.5rem;
-        --offsetX: 0px;
-        --offsetY: 0px;
-
-        position: absolute;
-        top: 50%;
-        left: 50%;
-
-        transform: translate(
-          calc(-50% + var(--offsetX)),
-          calc(-50% + var(--offsetY))
-        );
-
-        width: var(--width);
-        height: var(--height);
-        clip-path: polygon(
-          25% 0%,
-          75% 0%,
-          100% 50%,
-          75% 100%,
-          25% 100%,
-          0% 50%
-        );
-
         appearance: none;
         border: none;
         outline: none;
 
-        background-color: var(--gray);
+        min-width: 1.75rem;
+        height: 3rem;
+        
+        display: grid;
+        place-content: center;
+
+        border-radius: 0.25rem;
         color: var(--black);
         cursor: pointer;
-        font-size: 2rem;
-        font-weight: bold;
+        font-size: 1.125rem;
       }
       button.letter:disabled {
         opacity: 0.4;
       }
-
-      button#letter-1 {
-        --offsetY: calc(-1 * (var(--height) + var(--gap)));
+      button.letter-input {
+        text-transform: uppercase;
       }
-      button#letter-2 {
-        --offsetY: calc(-0.5 * (var(--height) + var(--gap)));
-        --offsetX: calc(-0.75 * (var(--width) + var(--gap)));
-      }
-      button#letter-3 {
-        --offsetY: calc(0.5 * (var(--height) + var(--gap)));
-        --offsetX: calc(-0.75 * (var(--width) + var(--gap)));
-      }
-      button#letter-4 {
-        background-color: var(--yellow);
-      }
-      button#letter-5 {
-        --offsetY: calc(-0.5 * (var(--height) + var(--gap)));
-        --offsetX: calc(0.75 * (var(--width) + var(--gap)));
-      }
-      button#letter-6 {
-        --offsetY: calc(0.5 * (var(--height) + var(--gap)));
-        --offsetX: calc(0.75 * (var(--width) + var(--gap)));
-      }
-      button#letter-7 {
-        --offsetY: calc(1 * (var(--height) + var(--gap)));
+      :where(button.letter) {
+        background-color: var(--light-gray);
       }
 
       div#actions {
@@ -355,20 +322,11 @@
         gap: 2rem;
       }
 
-      #more-categories,
-      #archived-categories,
       #overview-daily-games,
       #overview-random-games-container,
       #overview-random-games {
         display: flex;
         flex-flow: column nowrap;
-        gap: 0.5rem;
-      }
-
-      #more-words,
-      #archived-words {
-        display: flex;
-        flex-flow: row wrap;
         gap: 0.5rem;
       }
 
@@ -409,106 +367,97 @@
             </svg>
           </button>
         </div>
-        <h1>BEE</h1>
-        <div class="nav-buttons right">
-          <button id="archive-button" class="white button">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M16.875 6.25L16.3542 15.11C16.3261 15.5875 16.1166 16.0363 15.7685 16.3644C15.4204 16.6925 14.96 16.8752 14.4817 16.875H5.51833C5.03997 16.8752 4.57962 16.6925 4.23152 16.3644C3.88342 16.0363 3.6739 15.5875 3.64583 15.11L3.125 6.25M8.33333 9.375H11.6667M2.8125 6.25H17.1875C17.705 6.25 18.125 5.83 18.125 5.3125V4.0625C18.125 3.545 17.705 3.125 17.1875 3.125H2.8125C2.295 3.125 1.875 3.545 1.875 4.0625V5.3125C1.875 5.83 2.295 6.25 2.8125 6.25Z"
-                stroke="black"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </button>
-        </div>
+        <h1>WORD</h1>
+        <div class="nav-buttons right"></div>
       </nav>
-      <header id="score">
-        <div class="icon-group">
-          <svg
-            width="22"
-            height="23"
-            viewBox="0 0 22 23"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M15.125 17.6875H6.875M15.125 17.6875C15.8543 17.6875 16.5538 17.9772 17.0695 18.493C17.5853 19.0087 17.875 19.7082 17.875 20.4375H4.125C4.125 19.7082 4.41473 19.0087 4.93045 18.493C5.44618 17.9772 6.14565 17.6875 6.875 17.6875M15.125 17.6875V14.5938C15.125 14.0245 14.6639 13.5625 14.0937 13.5625H13.2953M6.875 17.6875V14.5938C6.875 14.0245 7.337 13.5625 7.90625 13.5625H8.70558M13.2953 13.5625H8.70558M13.2953 13.5625C12.7805 12.6733 12.4728 11.6794 12.3952 10.6548M8.70558 13.5625C9.22012 12.6732 9.5275 11.6793 9.60483 10.6548M12.3952 10.6548C13.3191 10.4416 14.1805 10.0181 14.9142 9.41733M12.3952 10.6548C11.4771 10.8666 10.5229 10.8666 9.60483 10.6548M9.60483 10.6548C8.68119 10.4415 7.8192 10.018 7.08583 9.41733M4.8125 4.383C3.91233 4.51408 3.02133 4.67358 2.1395 4.85967C2.34391 6.05939 2.94028 7.1575 3.83528 7.98218C4.73028 8.80685 5.87342 9.31156 7.08583 9.41733M4.8125 4.383V4.625C4.8125 6.55733 5.698 8.2825 7.08583 9.41733M4.8125 4.383V2.99425C6.83466 2.70917 8.90083 2.5625 11 2.5625C13.1001 2.5625 15.1662 2.70917 17.1875 2.99333V4.383M17.1875 4.383V4.625C17.1875 6.55733 16.302 8.2825 14.9142 9.41733M17.1875 4.383C18.0834 4.51335 18.9748 4.67232 19.8605 4.85967C19.6561 6.05925 19.0599 7.15725 18.1651 7.98191C17.2703 8.80657 16.1264 9.31137 14.9142 9.41733"
-              stroke="black"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-          <span>
-            <strong id="score-category">Beginner</strong> (<span
-              id="score-total"
-              >0 points</span
-            >)
-          </span>
-        </div>
-        <div id="next-category-group" class="icon-group">
-          <svg
-            width="22"
-            height="23"
-            viewBox="0 0 22 23"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M2.0625 17L8.25 10.8125L12.1972 14.7606C13.3382 12.5109 15.2207 10.7239 17.5267 9.7015L20.0383 8.58316M20.0383 8.58316L14.5933 6.49316M20.0383 8.58316L17.9483 14.0291"
-              stroke="black"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-          <span>
-            <span id="score-to-next-category">0</span> to
-            <strong id="next-category">Novice</strong>
-          </span>
-        </div>
-        <button id="more-button" class="small gray button">
-          <svg
-            width="15"
-            height="15"
-            viewBox="0 0 15 15"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M2.34375 1.875V8.90625C2.34375 9.27921 2.49191 9.6369 2.75563 9.90062C3.01935 10.1643 3.37704 10.3125 3.75 10.3125H5.15625M2.34375 1.875H1.40625M2.34375 1.875H12.6562M5.15625 10.3125H9.84375M5.15625 10.3125L4.53125 12.1875M12.6562 1.875H13.5938M12.6562 1.875V8.90625C12.6562 9.27921 12.5081 9.6369 12.2444 9.90062C11.9806 10.1643 11.623 10.3125 11.25 10.3125H9.84375M9.84375 10.3125L10.4688 12.1875M4.53125 12.1875H10.4688M4.53125 12.1875L4.21875 13.125M10.4688 12.1875L10.7812 13.125M4.6875 7.5L6.5625 5.625L7.905 6.9675C8.53575 6.06206 9.3576 5.30614 10.3125 4.75313"
-              stroke="black"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </button>
-      </header>
       <section id="game">
         <div id="input">
-          <span id="feedback"></span>
-          <span id="current-word"><span></span></span>
+          <div id="attempt-1" class="attempt-row">
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+          </div>
+          <div id="attempt-2" class="attempt-row">
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+          </div>
+          <div id="attempt-3" class="attempt-row">
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+          </div>
+          <div id="attempt-4" class="attempt-row">
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+          </div>
+          <div id="attempt-5" class="attempt-row">
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+          </div>
+          <div id="attempt-6" class="attempt-row">
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+            <div class="attempt-letter"></div>
+          </div>
+          <dialog id="archive-dialog">
+            <span>The word was <strong id="archive-word"></strong>!</span>
+          </div>
         </div>
         <div id="buttons">
-          <button id="letter-1" class="letter">—</button>
-          <button id="letter-2" class="letter">—</button>
-          <button id="letter-3" class="letter">—</button>
-          <button id="letter-4" class="letter">—</button>
-          <button id="letter-5" class="letter">—</button>
-          <button id="letter-6" class="letter">—</button>
-          <button id="letter-7" class="letter">—</button>
-        </div>
-        <div id="actions">
-          <div id="actions-inner">
-            <button id="delete" class="white button">
+          <div class="button-row">
+            <button data-letter="q" class="letter letter-input">q</button>
+            <button data-letter="w" class="letter letter-input">w</button>
+            <button data-letter="e" class="letter letter-input">e</button>
+            <button data-letter="r" class="letter letter-input">r</button>
+            <button data-letter="t" class="letter letter-input">t</button>
+            <button data-letter="y" class="letter letter-input">y</button>
+            <button data-letter="u" class="letter letter-input">u</button>
+            <button data-letter="i" class="letter letter-input">i</button>
+            <button data-letter="o" class="letter letter-input">o</button>
+            <button data-letter="p" class="letter letter-input">p</button>
+          </div>
+          <div class="button-row">
+            <button data-letter="a" class="letter letter-input">a</button>
+            <button data-letter="s" class="letter letter-input">s</button>
+            <button data-letter="d" class="letter letter-input">d</button>
+            <button data-letter="f" class="letter letter-input">f</button>
+            <button data-letter="g" class="letter letter-input">g</button>
+            <button data-letter="h" class="letter letter-input">h</button>
+            <button data-letter="j" class="letter letter-input">j</button>
+            <button data-letter="k" class="letter letter-input">k</button>
+            <button data-letter="l" class="letter letter-input">l</button>
+          </div>
+          <div class="button-row">
+            <button id="letter-Enter" class="letter">Enter</button>
+            <button data-letter="z" class="letter letter-input">z</button>
+            <button data-letter="x" class="letter letter-input">x</button>
+            <button data-letter="c" class="letter letter-input">c</button>
+            <button data-letter="v" class="letter letter-input">v</button>
+            <button data-letter="b" class="letter letter-input">b</button>
+            <button data-letter="n" class="letter letter-input">n</button>
+            <button data-letter="m" class="letter letter-input">m</button>
+            <button id="letter-Delete" class="letter">
               <svg
                 width="20"
                 height="21"
@@ -525,24 +474,6 @@
                 />
               </svg>
             </button>
-            <button id="shuffle" class="white button">
-              <svg
-                width="20"
-                height="21"
-                viewBox="0 0 20 21"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M13.3525 8.29001H17.5125L14.8617 5.63751C14.0082 4.78407 12.9452 4.17034 11.7793 3.85802C10.6135 3.54569 9.38601 3.54578 8.22022 3.85828C7.05444 4.17078 5.99147 4.78467 5.13816 5.63823C4.28486 6.4918 3.6713 7.55497 3.35917 8.72084M2.4875 16.87V12.71M2.4875 12.71H6.6475M2.4875 12.71L5.1375 15.3625C5.99093 16.216 7.05399 16.8297 8.21982 17.142C9.38565 17.4543 10.6132 17.4542 11.7789 17.1417C12.9447 16.8292 14.0077 16.2154 14.861 15.3618C15.7143 14.5082 16.3279 13.4451 16.64 12.2792M17.5125 4.13001V8.28834"
-                  stroke="black"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </button>
-            <button id="submit" class="yellow button">Submit</button>
           </div>
         </div>
       </section>
@@ -634,187 +565,14 @@
         </div>
       </div>
     </dialog>
-
-    <dialog id="archived-dialog" class="dialog">
-      <div class="nav">
-        <h1>Archived Stats</h1>
-        <button id="archived-close-button" class="gray button">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M5 15L15 5M5 5L15 15"
-              stroke="black"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </button>
-      </div>
-      <div class="two-pane">
-        <div class="two-pane-pane">
-          <div class="icon-group">
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 22 22"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M15.125 17.1875H6.875M15.125 17.1875C15.8543 17.1875 16.5538 17.4772 17.0695 17.993C17.5853 18.5087 17.875 19.2082 17.875 19.9375H4.125C4.125 19.2082 4.41473 18.5087 4.93045 17.993C5.44618 17.4772 6.14565 17.1875 6.875 17.1875M15.125 17.1875V14.0938C15.125 13.5245 14.6639 13.0625 14.0937 13.0625H13.2953M6.875 17.1875V14.0938C6.875 13.5245 7.337 13.0625 7.90625 13.0625H8.70558M13.2953 13.0625H8.70558M13.2953 13.0625C12.7805 12.1733 12.4728 11.1794 12.3952 10.1548M8.70558 13.0625C9.22012 12.1732 9.5275 11.1793 9.60483 10.1548M12.3952 10.1548C13.3191 9.9416 14.1805 9.51812 14.9142 8.91733M12.3952 10.1548C11.4771 10.3666 10.5229 10.3666 9.60483 10.1548M9.60483 10.1548C8.68119 9.94147 7.8192 9.518 7.08583 8.91733M4.8125 3.883C3.91233 4.01408 3.02133 4.17358 2.1395 4.35967C2.34391 5.55939 2.94028 6.6575 3.83528 7.48218C4.73028 8.30685 5.87342 8.81156 7.08583 8.91733M4.8125 3.883V4.125C4.8125 6.05733 5.698 7.7825 7.08583 8.91733M4.8125 3.883V2.49425C6.83466 2.20917 8.90083 2.0625 11 2.0625C13.1001 2.0625 15.1662 2.20917 17.1875 2.49333V3.883M17.1875 3.883V4.125C17.1875 6.05733 16.302 7.7825 14.9142 8.91733M17.1875 3.883C18.0834 4.01335 18.9748 4.17232 19.8605 4.35967C19.6561 5.55925 19.0599 6.65725 18.1651 7.48191C17.2703 8.30657 16.1264 8.81137 14.9142 8.91733"
-                stroke="black"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-            <strong
-              ><span id="archived-categories-total">0 points</span> /
-              <span id="archived-categories-max">0</span></strong
-            >
-          </div>
-          <div id="archived-categories" class="two-pane-pane-inner"></div>
-        </div>
-        <div class="two-pane-pane">
-          <div class="icon-group">
-            <svg
-              width="23"
-              height="22"
-              viewBox="0 0 23 22"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M7.375 7.5625H15.625M7.375 10.3125H11.5M2.5625 11.6967C2.5625 13.1633 3.59192 14.4412 5.04392 14.6548C6.07883 14.8069 7.12475 14.9233 8.18167 15.0022C8.5025 15.026 8.79583 15.1947 8.97458 15.4614L11.5 19.25L14.0254 15.4614C14.114 15.3297 14.2315 15.2198 14.3689 15.1403C14.5062 15.0607 14.66 15.0135 14.8183 15.0022C15.8681 14.9238 16.9146 14.8079 17.9561 14.6548C19.4081 14.4412 20.4375 13.1643 20.4375 11.6958V6.17925C20.4375 4.71075 19.4081 3.43384 17.9561 3.22025C15.8184 2.90649 13.6606 2.74932 11.5 2.75C9.30733 2.75 7.15133 2.91042 5.04392 3.22025C3.59192 3.43384 2.5625 4.71167 2.5625 6.17925V11.6958V11.6967Z"
-                stroke="black"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-            <strong
-              ><span id="archived-words-total">0 words</span> /
-              <span id="archived-words-max">0</span></strong
-            >
-          </div>
-          <div id="archived-words" class="two-pane-pane-inner"></div>
-        </div>
-      </div>
-    </dialog>
-
-    <dialog id="more-dialog" class="dialog">
-      <div class="nav">
-        <h1>Detailed Stats</h1>
-        <button id="more-close-button" class="gray button">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M5 15L15 5M5 5L15 15"
-              stroke="black"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </button>
-      </div>
-      <div class="two-pane">
-        <div class="two-pane-pane">
-          <div class="icon-group">
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 22 22"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M15.125 17.1875H6.875M15.125 17.1875C15.8543 17.1875 16.5538 17.4772 17.0695 17.993C17.5853 18.5087 17.875 19.2082 17.875 19.9375H4.125C4.125 19.2082 4.41473 18.5087 4.93045 17.993C5.44618 17.4772 6.14565 17.1875 6.875 17.1875M15.125 17.1875V14.0938C15.125 13.5245 14.6639 13.0625 14.0937 13.0625H13.2953M6.875 17.1875V14.0938C6.875 13.5245 7.337 13.0625 7.90625 13.0625H8.70558M13.2953 13.0625H8.70558M13.2953 13.0625C12.7805 12.1733 12.4728 11.1794 12.3952 10.1548M8.70558 13.0625C9.22012 12.1732 9.5275 11.1793 9.60483 10.1548M12.3952 10.1548C13.3191 9.9416 14.1805 9.51812 14.9142 8.91733M12.3952 10.1548C11.4771 10.3666 10.5229 10.3666 9.60483 10.1548M9.60483 10.1548C8.68119 9.94147 7.8192 9.518 7.08583 8.91733M4.8125 3.883C3.91233 4.01408 3.02133 4.17358 2.1395 4.35967C2.34391 5.55939 2.94028 6.6575 3.83528 7.48218C4.73028 8.30685 5.87342 8.81156 7.08583 8.91733M4.8125 3.883V4.125C4.8125 6.05733 5.698 7.7825 7.08583 8.91733M4.8125 3.883V2.49425C6.83466 2.20917 8.90083 2.0625 11 2.0625C13.1001 2.0625 15.1662 2.20917 17.1875 2.49333V3.883M17.1875 3.883V4.125C17.1875 6.05733 16.302 7.7825 14.9142 8.91733M17.1875 3.883C18.0834 4.01335 18.9748 4.17232 19.8605 4.35967C19.6561 5.55925 19.0599 6.65725 18.1651 7.48191C17.2703 8.30657 16.1264 8.81137 14.9142 8.91733"
-                stroke="black"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-            <strong id="more-categories-total">0 points</strong>
-          </div>
-          <div id="more-categories" class="two-pane-pane-inner"></div>
-        </div>
-        <div class="two-pane-pane">
-          <div class="icon-group">
-            <svg
-              width="23"
-              height="22"
-              viewBox="0 0 23 22"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M7.375 7.5625H15.625M7.375 10.3125H11.5M2.5625 11.6967C2.5625 13.1633 3.59192 14.4412 5.04392 14.6548C6.07883 14.8069 7.12475 14.9233 8.18167 15.0022C8.5025 15.026 8.79583 15.1947 8.97458 15.4614L11.5 19.25L14.0254 15.4614C14.114 15.3297 14.2315 15.2198 14.3689 15.1403C14.5062 15.0607 14.66 15.0135 14.8183 15.0022C15.8681 14.9238 16.9146 14.8079 17.9561 14.6548C19.4081 14.4412 20.4375 13.1643 20.4375 11.6958V6.17925C20.4375 4.71075 19.4081 3.43384 17.9561 3.22025C15.8184 2.90649 13.6606 2.74932 11.5 2.75C9.30733 2.75 7.15133 2.91042 5.04392 3.22025C3.59192 3.43384 2.5625 4.71167 2.5625 6.17925V11.6958V11.6967Z"
-                stroke="black"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-            <strong id="more-words-total">0 words</strong>
-          </div>
-          <div id="more-words" class="two-pane-pane-inner"></div>
-        </div>
-      </div>
-    </dialog>
   </body>
   <script id="variables">
     const Constants = {
       Api: {
         Dict: "/dict.txt",
       },
-      Gameplay: {
-        FeedbackTimeout: 2000,
-      },
-      Maps: {
-        CategoryPercentageMap: {
-          Newbie: 0.0,
-          Novice: 0.02,
-          Fine: 0.05,
-          Skilled: 0.08,
-          Excellent: 0.15,
-          Superb: 0.25,
-          Marvellous: 0.4,
-          Outstanding: 0.5,
-          "Queen Bee": 0.7,
-        },
-        // 0-indexed
-        WordLengthScoreMap: [
-          0,
-          0,
-          0,
-          0,
-          1, // scoring starts at 4
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15,
-        ],
-      },
+      WordLength: 5,
+      Attempts: 6,
     };
 
     const AppState = {
@@ -840,246 +598,146 @@
           Element: document.getElementById("overview-new-random-game"),
           Listener: undefined,
         },
-        ArchiveButton: {
-          Element: document.getElementById("archive-button"),
-          Listener: undefined,
-        },
-        ArchivedCloseButton: {
-          Element: document.getElementById("archived-close-button"),
-          Listener: undefined,
-        },
-        MoreButton: {
-          Element: document.getElementById("more-button"),
-          Listener: undefined,
-        },
-        MoreCloseButton: {
-          Element: document.getElementById("more-close-button"),
-          Listener: undefined,
-        },
       },
       Dialogs: {
-        MoreDialog: document.getElementById("more-dialog"),
-        MoreCategoriesTotal: document.getElementById("more-categories-total"),
-        MoreCategories: document.getElementById("more-categories"),
-        MoreWordsTotal: document.getElementById("more-words-total"),
-        MoreWords: document.getElementById("more-words"),
-
-        ArchivedDialog: document.getElementById("archived-dialog"),
-        ArchivedCategoriesTotal: document.getElementById(
-          "archived-categories-total"
-        ),
-        ArchivedCategoriesMax: document.getElementById(
-          "archived-categories-max"
-        ),
-        ArchivedCategories: document.getElementById("archived-categories"),
-        ArchivedWordsTotal: document.getElementById("archived-words-total"),
-        ArchivedWordsMax: document.getElementById("archived-words-max"),
-        ArchivedWords: document.getElementById("archived-words"),
-
         OverviewDialog: document.getElementById("overview-dialog"),
         OverviewDailyGames: document.getElementById("overview-daily-games"),
         OverviewRandomGames: document.getElementById("overview-random-games"),
-      },
-      Score: {
-        ScoreCategory: document.getElementById("score-category"),
-        ScoreTotal: document.getElementById("score-total"),
-        ScoreToNextCategory: document.getElementById("score-to-next-category"),
-        NextCategory: document.getElementById("next-category"),
-        NextCategoryGroup: document.getElementById("next-category-group"),
+        ArchiveDialog: document.getElementById("archive-dialog"),
       },
       Word: {
-        Feedback: document.getElementById("feedback"),
-        CurrentWord: document.getElementById("current-word"),
+        Attempt1: document.getElementById("attempt-1"),
+        Attempt2: document.getElementById("attempt-2"),
+        Attempt3: document.getElementById("attempt-3"),
+        Attempt4: document.getElementById("attempt-4"),
+        Attempt5: document.getElementById("attempt-5"),
+        Attempt6: document.getElementById("attempt-6"),
+        ArchiveWord: document.getElementById("archive-word"),
       },
       Interactive: {
-        Center: {
-          Element: document.getElementById("letter-4"),
+        Enter: {
+          Element: document.getElementById("letter-Enter"),
           Listener: undefined,
         },
-        Letters: [
-          {
-            Element: document.getElementById("letter-1"),
-            Listener: undefined,
-          },
-          {
-            Element: document.getElementById("letter-2"),
-            Listener: undefined,
-          },
-          {
-            Element: document.getElementById("letter-3"),
-            Listener: undefined,
-          },
-          {
-            Element: document.getElementById("letter-5"),
-            Listener: undefined,
-          },
-          {
-            Element: document.getElementById("letter-6"),
-            Listener: undefined,
-          },
-          {
-            Element: document.getElementById("letter-7"),
-            Listener: undefined,
-          },
-        ],
-      },
-      Actions: {
         Delete: {
-          Element: document.getElementById("delete"),
+          Element: document.getElementById("letter-Delete"),
           Listener: undefined,
         },
-        Shuffle: {
-          Element: document.getElementById("shuffle"),
-          Listener: undefined,
-        },
-        Submit: {
-          Element: document.getElementById("submit"),
-          Listener: undefined,
-        },
+        Letters: 
+          Array.from(document.querySelectorAll(".letter-input")).map((Element) => ({
+            Element,
+            Listener: undefined,
+          }))
       },
+      Document: {
+        Element: document,
+        Listener: undefined,
+      }
     };
   </script>
   <script id="gamegen">
-    const loadDict = async () => {
-      // only load the dictionary if it doesn't already exist
-      if (GameDict) return;
-      GameDict = new Map();
+    const loadDict = async (length) => {
+      if (GameDict && GameDict.has(length)) return GameDict.get(length);
 
-      const response = await fetch(Constants.Api.Dict);
-      const dict = await response.text();
+      if (!GameDict) {
+        GameDict = new Map();
 
-      dict.split("\n").forEach((word) => {
-        word
-          .trim()
-          .split("")
-          .forEach((letter) => {
-            if (GameDict.has(letter)) {
-              GameDict.get(letter).add(word);
-            } else {
-              GameDict.set(letter, new Set([word]));
-            }
-          });
-      });
+        const response = await fetch(Constants.Api.Dict);
+        const dict = await response.text();
+        const allWords = dict.split("\n").map(word => word.trim());
+
+        GameDict.set(0, allWords);
+      }
+
+      const lengthWords = GameDict.get(0).filter(word => word.length === length);
+      GameDict.set(length, lengthWords);
+      return lengthWords;
     };
 
-    // deterministically generates letters given a seed
-    const generateLetters = async (seed) => {
-      const Letters = [
-        "a",
-        "e",
-        "i",
-        "o",
-        "u",
-        "b",
-        "c",
-        "d",
-        "f",
-        "g",
-        "h",
-        "j",
-        "k",
-        "l",
-        "m",
-        "n",
-        "p",
-        "q",
-        "r",
-        "s",
-        "t",
-        "v",
-        "w",
-        "x",
-        "y",
-        "z",
-      ];
+    // deterministically generates a valid game given a seed and length
+    const generateGame = async (seed, length = Constants.WordLength) => {
+      if (length < 4 || Number.isNaN(length))
+        throw new Error("Invalid length!");
+
+      performance.mark("generate-start");
+
+      // only loads dictionary if it doesn't exist
+      const dict = await loadDict(length);
 
       const encoder = new TextEncoder();
       const data = encoder.encode(seed);
       const digest = await crypto.subtle.digest("SHA-1", data);
 
       const view = new DataView(digest);
+      const index = (view.getUint8(0) + (view.getUint8(1) * view.getUint8(2) * view.getUint8(3) * view.getUint8(4))) % dict.length;
 
-      return [
-        Letters.splice(view.getUint8(0) % 26, 1), // center letter
-        Letters.splice(view.getUint8(1) % 5, 1), // guarantee at least one vowel
-        Letters.splice(view.getUint8(2) % 24, 1),
-        Letters.splice(view.getUint8(3) % 23, 1),
-        Letters.splice(view.getUint8(4) % 22, 1),
-        Letters.splice(view.getUint8(5) % 21, 1),
-        Letters.splice(view.getUint8(6) % 20, 1),
-      ].flat();
-    };
-
-    // deterministically generates a valid game given a seed
-    const generateGame = async (seed) => {
-      performance.mark("generate-start");
-
-      // only loads dictionary if it doesn't exist
-      await loadDict();
-
-      let innerSeed = seed;
-      let iterations = 0;
-
-      while (true) {
-        const [center, ...letters] = await generateLetters(innerSeed);
-        const letterMap = new Map([[center, true]]);
-        letters.forEach((letter) => letterMap.set(letter, true));
-
-        let hasPangram = false;
-        const game = {
-          seed,
-          center,
-          letters: letters.join(""),
-          wordlist: [],
-          total: 0,
-        };
-
-        const dict = GameDict.get(center);
-        dict.forEach((word) => {
-          let matched;
-          if (word.split("").every((letter) => letterMap.has(letter))) {
-            game.wordlist.push(word);
-            game.total +=
-              Constants.Maps.WordLengthScoreMap[word.length] +
-              (word.length >= 7 &&
-              letters.every((letter) => word.includes(letter)) &&
-              // assignment in this way returns the assigned value
-              (hasPangram = true)
-                ? 7
-                : 0);
-          }
-        });
-
-        if (
-          hasPangram &&
-          game.wordlist.length > 20 &&
-          game.wordlist.length < 100
-        ) {
-          performance.mark("generate-end");
-          const measure = performance.measure(
-            "generate-measure",
-            "generate-start",
-            "generate-end"
-          );
-          console.log(
-            `Took ${measure.duration.toFixed(
-              2
-            )}ms and ${iterations} iterations to generate latest game.`
-          );
-
-          return game;
-        }
-
-        innerSeed = [center, ...letters, seed, iterations++].join("");
-
-        if (iterations > 1000)
-          throw new Error(
-            "Tried 1000 iterations to generate a game but couldn't find one."
-          );
-      }
+      return dict[index];
     };
   </script>
   <script id="gameplay">
+    const getWordLetterState = (word, attempt, position) => {
+      if (word.length !== attempt.length)
+        throw new Error(`Cannot get state of attempt since length is different: wanted ${word.length}, got ${attempt.length}`);
+
+      const letter = attempt.charAt(position);
+
+      if (word.charAt(position) === letter) {
+        /**
+         * Always return green if the letter is right
+         */
+        return "green";
+      } else {
+        /**
+         * We need to be more careful if it's not an
+         * exact match. Specifically, we need to
+         * highlight the correct number of letters.
+         */
+        let lettersInWord = 0;
+        let greenLetters = 0;
+        let lettersToLeftInAttempt = 0;
+
+        for (let i = 0; i < word.length; i++) {
+          const wordHasLetter = word.charAt(i) === letter;
+          const attemptHasLetter = attempt.charAt(i) === letter;
+
+          if (wordHasLetter) lettersInWord++;
+          if (wordHasLetter && attemptHasLetter) greenLetters++;
+          if (i < position && attemptHasLetter) lettersToLeftInAttempt++;
+        }
+
+        /**
+         * We only return yellow if these are true:
+         * a) there's at least one of this letter in the word
+         * b) there are fewer of these green letters than there are these letters in the word
+         * c) there are fewer of these letters to the left of this one
+         * than the difference between these green letters and letters in the word
+         */
+        return lettersInWord - greenLetters - lettersToLeftInAttempt > 0 ? "yellow" : "gray";
+      };
+    }
+
+    const getLetterState = (word, letter, attempts) => {
+      let finalState = "";
+
+      for (const attempt of attempts) {
+        if (attempt.includes(letter)) {
+          for (let i = 0; i < attempt.length; i++) {
+            const attemptLetter = attempt.charAt(i);
+
+            if (attemptLetter === letter) {
+              const state = getWordLetterState(word, attempt, i);
+
+              if (state === "green") return "green";
+              if (state === "yellow") finalState = "yellow";
+              if (state === "gray" && finalState === "") finalState = "gray";
+            }
+          }
+        }
+      }
+
+      return finalState;
+    }
+
     const archiveGame = (gameKey) => {
       if (!(gameKey in GameHistory))
         throw new Error("Attempted to archive nonexistent game!");
@@ -1088,202 +746,93 @@
         throw new Error("Attempted to archive current game!");
 
       GameHistory[gameKey].archived = true;
-      GameHistory[gameKey].notify = undefined;
-      GameHistory[gameKey].currentWord = "ARCHIVED";
-      GameHistory[gameKey].feedback = "This game is archived.";
 
       updateDisplayState();
     };
 
-    const switchGame = (gameKey) => {
+    const switchGame = async (gameKey) => {
       if (!(gameKey in GameHistory))
         throw new Error("Attempted to switch to nonexistent game!");
       AppState.currentGameKey = gameKey;
       GameState = GameHistory[AppState.currentGameKey];
+      await loadDict(GameState.length);
       updateDisplayState();
     };
 
-    const loadRandom = async () => {
-      const game = await generateGame(crypto.randomUUID());
+    const loadRandom = async (length) => {
+      const uuid = crypto.randomUUID();
 
-      const key = `${game.center}+${game.letters}`;
+      const word = await generateGame(uuid, length);
+
+      const key = `${length ?? Constants.WordLength}+${uuid.slice(0, 6)}`;
 
       GameHistory[key] = {
         date: key,
-        game,
-        score: 0,
-        currentWord: "",
-        feedback: "",
-        words: [],
-        CategoryPointsMap: Object.fromEntries(
-          Object.entries(Constants.Maps.CategoryPercentageMap).map(
-            ([category, percentage]) => [
-              category,
-              Math.floor(percentage * game.total),
-            ]
-          )
-        ),
+        word,
+        length: word.length,
+          activeAttempt: 0,
+        attempts: [],
       };
 
-      switchGame(key);
+      await switchGame(key);
     };
 
     const load = async () => {
       AppState.now = new Date(
         Date.now() - 3 * 60 * 60 * 1000
       ).toLocaleDateString("en-CA");
-      const localDataString = window.localStorage.getItem("bee_History");
+      const localDataString = window.localStorage.getItem("word_History");
 
       if (localDataString) {
         GameHistory = JSON.parse(localDataString);
       }
 
       if (!GameHistory[AppState.now]) {
-        const game = await generateGame(AppState.now);
+        const word = await generateGame(AppState.now);
 
         GameHistory[AppState.now] = {
           date: AppState.now,
-          game,
-          score: 0,
-          currentWord: "",
-          feedback: "",
-          words: [],
-          CategoryPointsMap: Object.fromEntries(
-            Object.entries(Constants.Maps.CategoryPercentageMap).map(
-              ([category, percentage]) => [
-                category,
-                Math.floor(percentage * game.total),
-              ]
-            )
-          ),
+          word,
+          length: word.length,
+          activeAttempt: 0,
+          attempts: [],
         };
       }
 
-      switchGame(AppState.now);
+      await switchGame(AppState.now);
     };
 
     const save = async () => {
-      window.localStorage.setItem("bee_History", JSON.stringify(GameHistory));
-    };
-
-    const calculateCategories = (score, categoryPointsMap) => {
-      let currentCategory = undefined;
-      let nextCategory = undefined;
-      let pointsToNextCategory = 0;
-
-      for (const [category, points] of Object.entries(categoryPointsMap)) {
-        if (points > score) {
-          nextCategory = category;
-          pointsToNextCategory = points - score;
-          break;
-        } else {
-          currentCategory = category;
-        }
-      }
-
-      return {
-        currentCategory,
-        nextCategory,
-        pointsToNextCategory,
-      };
+      window.localStorage.setItem("word_History", JSON.stringify(GameHistory));
     };
 
     const updateDisplayState = () => {
-      const { currentCategory, nextCategory, pointsToNextCategory } =
-        calculateCategories(GameState.score, GameState.CategoryPointsMap);
+      Bindings.Word.ArchiveWord.innerHTML = GameState.word;
 
-      Bindings.Score.ScoreCategory.textContent = currentCategory;
-      Bindings.Score.ScoreTotal.textContent = `${GameState.score} point${
-        GameState.score === 1 ? "" : "s"
-      }`;
-      Bindings.Score.ScoreToNextCategory.textContent = pointsToNextCategory;
-      Bindings.Score.NextCategory.textContent = nextCategory;
-      Bindings.Score.NextCategoryGroup.style.setProperty(
-        "display",
-        nextCategory && !GameState.archived ? "flex" : "none"
-      );
+      Bindings.Dialogs.ArchiveDialog.close();
+      if (GameState.archived && !GameState.attempts.includes(GameState.word)) {
+        Bindings.Dialogs.ArchiveDialog.show();
+      }
 
-      Bindings.Word.Feedback.textContent = GameState.feedback;
-      Bindings.Word.CurrentWord.innerHTML = GameState.currentWord
-        .toLocaleUpperCase()
-        .split("")
-        .reduce(
-          (innerHTML, letter) =>
-            (innerHTML += `<span${
-              letter === GameState.game.center.toLocaleUpperCase()
-                ? ' class="yellow-color"'
-                : ""
-            }>${letter}</span>`),
-          "<span></span>"
-        );
+      for (let i = 0; i < Constants.Attempts; i++) {
+        const attempt = GameState.attempts[i];
 
-      if (GameState.archived) {
-        Bindings.Dialogs.ArchivedCategoriesTotal.textContent = `${
-          GameState.score
-        } point${GameState.score === 1 ? "" : "s"}`;
-        Bindings.Dialogs.ArchivedCategoriesMax.textContent =
-          GameState.game.total;
-        Bindings.Dialogs.ArchivedCategories.innerHTML = Object.entries(
-          GameState.CategoryPointsMap
-        ).reduce(
-          (innerHTML, [category, points]) =>
-            (innerHTML += `<span${
-              category === currentCategory ? ' class="yellow"' : ""
-            }><strong>${category}</strong> (${points}  point${
-              points === 1 ? "" : "s"
-            })</span>`),
-          ""
-        );
-        Bindings.Dialogs.ArchivedWordsTotal.textContent = `${
-          GameState.words.length
-        } word${GameState.words.length === 1 ? "" : "s"}`;
-        Bindings.Dialogs.ArchivedWordsMax.textContent =
-          GameState.game.wordlist.length;
-        Bindings.Dialogs.ArchivedWords.innerHTML =
-          GameState.game.wordlist.reduce(
-            (innerHTML, word) =>
-              (innerHTML += `<span class="${
-                word.length >= 7 &&
-                GameState.game.letters
-                  .split("")
-                  .every((letter) => word.includes(letter))
-                  ? "strong "
-                  : ""
-              }${
-                GameState.words.includes(word) ? "yellow" : "gray"
-              }">${word}</span>`),
-            ""
-          );
-      } else {
-        Bindings.Dialogs.MoreCategoriesTotal.textContent = `${
-          GameState.score
-        } point${GameState.score === 1 ? "" : "s"}`;
-        Bindings.Dialogs.MoreCategories.innerHTML = Object.entries(
-          GameState.CategoryPointsMap
-        ).reduce(
-          (innerHTML, [category, points]) =>
-            (innerHTML += `<span${
-              category === currentCategory ? ' class="yellow"' : ""
-            }><strong>${category}</strong> (${points}  point${
-              points === 1 ? "" : "s"
-            })</span>`),
-          ""
-        );
-        Bindings.Dialogs.MoreWordsTotal.textContent = `${
-          GameState.words.length
-        } word${GameState.words.length === 1 ? "" : "s"}`;
-        Bindings.Dialogs.MoreWords.innerHTML = GameState.words.reduce(
-          (innerHTML, word) =>
-            (innerHTML += `<span class="${
-              word.length >= 7 &&
-              GameState.game.letters
-                .split("")
-                .every((letter) => word.includes(letter))
-                ? "strong "
-                : ""
-            }gray">${word}</span>`),
-          ""
-        );
+        if (i < GameState.activeAttempt) {
+          if (attempt?.length !== GameState.length)
+            throw new Error("Game has misconfigured attempts!");
+
+          Bindings.Word[`Attempt${i + 1}`].innerHTML = attempt.split("").map((letter, position) => `<div class="attempt-letter ${getWordLetterState(GameState.word, attempt, position)}">${letter}</div>`).join("");
+        } else if (i === GameState.activeAttempt) {
+          let innerHTML = "";
+
+          for (let j = 0; j < GameState.length; j++) {
+            innerHTML += `<div class="attempt-letter">${attempt?.charAt(j) ?? ""}</div>`;
+          }
+
+          Bindings.Word[`Attempt${i + 1}`].innerHTML = innerHTML;
+        } else {
+          Bindings.Word[`Attempt${i + 1}`].innerHTML = new Array(GameState.length).fill(0).map(() => '<div class="attempt-letter"></div>').join("");
+        }
       }
 
       Bindings.Dialogs.OverviewDailyGames.innerHTML = Object.entries(
@@ -1293,7 +842,7 @@
         .reverse()
         .reduce(
           (innerHTML, [key, game]) =>
-            key === AppState.now || isNaN(key.charAt(0))
+            key === AppState.now || key.includes("+")
               ? innerHTML
               : (innerHTML += `<button data-game-key=${key} class="small ${
                   AppState.currentGameKey === key ? "yellow" : "gray"
@@ -1301,11 +850,7 @@
                     <span>
                       <strong>
                         ${key.slice(5, 7)}/${key.slice(8, 10)}
-                      </strong> 
-                      (${
-                        calculateCategories(game.score, game.CategoryPointsMap)
-                          .currentCategory
-                      })
+                      </strong>
                     </span>
                     ${
                       game.archived
@@ -1320,12 +865,6 @@
           } button">
             <span>
               <strong>Today</strong>
-              (${
-                calculateCategories(
-                  GameHistory[AppState.now].score,
-                  GameHistory[AppState.now].CategoryPointsMap
-                ).currentCategory
-              })
             </span>
             ${
               game.archived
@@ -1342,7 +881,7 @@
         .sort()
         .reduce(
           (innerHTML, [key, game]) =>
-            !isNaN(key.charAt(0))
+            !key.includes("+")
               ? innerHTML
               : (innerHTML += `<button data-game-key=${key} class="small ${
                   key === AppState.currentGameKey ? "yellow" : "gray"
@@ -1350,11 +889,7 @@
                   <span>
                     <strong>
                       ${key.replace("+", " • ")}
-                    </strong> 
-                    (${
-                      calculateCategories(game.score, game.CategoryPointsMap)
-                        .currentCategory
-                    })
+                    </strong>
                   </span>
                   ${
                     game.archived
@@ -1383,182 +918,80 @@
     };
 
     const updateButtonBindings = () => {
-      Bindings.Interactive.Center.Element.textContent =
-        GameState.game.center.toLocaleUpperCase();
-      for (const [index, letter] of GameState.game.letters
-        .split("")
-        .entries()) {
-        Bindings.Interactive.Letters[index].Element.textContent =
-          letter.toLocaleUpperCase();
-      }
-
       if (GameState.archived) {
-        Bindings.Interactive.Center.Element.setAttribute("disabled", true);
-        clearBinding(Bindings.Interactive.Center);
+        clearBinding(Bindings.Document, "keydown");
+
+        Bindings.Interactive.Enter.Element.setAttribute("disabled", true);
+        clearBinding(Bindings.Interactive.Enter);
+
+        Bindings.Interactive.Delete.Element.setAttribute("disabled", true);
+        clearBinding(Bindings.Interactive.Delete);
 
         Bindings.Interactive.Letters.forEach((Binding) => {
+          if (GameState.word.includes(Binding.Element.dataset.letter)) Binding.Element.classList.add("green");
           Binding.Element.setAttribute("disabled", true);
           clearBinding(Binding);
         });
-
-        Bindings.Actions.Delete.Element.setAttribute("disabled", true);
-        clearBinding(Bindings.Actions.Delete);
-        Bindings.Actions.Shuffle.Element.setAttribute("disabled", true);
-        clearBinding(Bindings.Actions.Shuffle);
-        Bindings.Actions.Submit.Element.setAttribute("disabled", true);
-        clearBinding(Bindings.Actions.Submit);
       } else {
-        Bindings.Interactive.Center.Element.removeAttribute("disabled");
-        Bindings.Interactive.Letters.forEach(({ Element }) =>
-          Element.removeAttribute("disabled")
-        );
-        Bindings.Actions.Delete.Element.removeAttribute("disabled");
-        Bindings.Actions.Shuffle.Element.removeAttribute("disabled");
-        Bindings.Actions.Submit.Element.removeAttribute("disabled");
+        Bindings.Interactive.Enter.Element.removeAttribute("disabled");
+        Bindings.Interactive.Delete.Element.removeAttribute("disabled");
 
-        updateBinding(Bindings.Interactive.Center, () => {
-          if (GameState.notify) {
-            GameState.currentWord = GameState.game.center;
-            GameState.feedback = "";
-            GameState.notify = undefined;
-          } else if (GameState.currentWord.length > 15) {
-            const key = crypto.randomUUID();
-            GameState.feedback = "Word too long.";
-            GameState.notify = key;
-            setTimeout(() => {
-              if (GameState.notify === key) {
-                GameState.currentWord = "";
-                GameState.feedback = "";
-                GameState.notify = undefined;
-                updateDisplayState();
-              }
-            }, Constants.Gameplay.FeedbackTimeout);
-          } else {
-            GameState.currentWord += GameState.game.center;
+        const onEnter = () => {
+          const attempt = GameState.attempts[GameState.activeAttempt];
+
+          if (attempt && attempt.length === GameState.length && GameDict.get(GameState.length)?.includes(attempt)) {
+            GameState.activeAttempt = GameState.activeAttempt + 1;
+
+            if (GameState.activeAttempt >= Constants.Attempts || GameState.attempts.includes(GameState.word))
+              GameState.archived = true;
           }
-          updateDisplayState();
-        });
 
-        for (const [index, letter] of GameState.game.letters
-          .split("")
-          .entries()) {
-          updateBinding(Bindings.Interactive.Letters[index], () => {
-            if (GameState.notify) {
-              GameState.currentWord = letter;
-              GameState.feedback = "";
-              GameState.notify = undefined;
-            } else if (GameState.currentWord.length > 15) {
-              const key = crypto.randomUUID();
-              GameState.feedback = "Word too long.";
-              GameState.notify = key;
-              setTimeout(() => {
-                if (GameState.notify === key) {
-                  GameState.currentWord = "";
-                  GameState.feedback = "";
-                  GameState.notify = undefined;
-                  updateDisplayState();
-                }
-              }, Constants.Gameplay.FeedbackTimeout);
-            } else {
-              GameState.currentWord += letter;
-            }
-            updateDisplayState();
-          });
+          updateDisplayState();
+        };
+        updateBinding(Bindings.Interactive.Enter, onEnter);
+
+        const onDelete = () => {
+          const attempt = GameState.attempts[GameState.activeAttempt];
+
+          if (attempt && attempt.length > 0) {
+            GameState.attempts[GameState.activeAttempt] = attempt.slice(0, attempt.length - 1);
+          }
+
+          updateDisplayState();
+        };
+        updateBinding(Bindings.Interactive.Delete, onDelete);
+        
+        const onLetter = (letter) => {
+          const attempt = GameState.attempts[GameState.activeAttempt];
+
+          if (!attempt || attempt.length < GameState.length) {
+            GameState.attempts[GameState.activeAttempt] = (attempt ?? "") + letter;
+          }
+
+          updateDisplayState();
+        };
+        for (const Binding of Bindings.Interactive.Letters) {
+          Binding.Element.classList.remove("green");
+          Binding.Element.classList.remove("yellow");
+          Binding.Element.classList.remove("gray");
+          Binding.Element.removeAttribute("disabled");
+
+          const letterState = getLetterState(GameState.word, Binding.Element.dataset.letter, GameState.attempts.slice(0, GameState.activeAttempt));
+          if (letterState) Binding.Element.classList.add(letterState);
+          
+          updateBinding(Binding, () => onLetter(Binding.Element.dataset.letter));
         }
 
-        updateBinding(Bindings.Actions.Delete, () => {
-          if (GameState.notify) {
-            GameState.currentWord = "";
-            GameState.feedback = "";
-            GameState.notify = undefined;
-          } else {
-            GameState.currentWord = GameState.currentWord.slice(0, -1);
-          }
-          updateDisplayState();
-        });
+        updateBinding(Bindings.Document, (e) => {
+          if (e.key === "Enter") onEnter();
+          if (e.key === "Backspace") onDelete();
 
-        updateBinding(Bindings.Actions.Shuffle, () => {
-          Bindings.Interactive.Letters = Bindings.Interactive.Letters.map(
-            (value) => ({ value, sort: Math.random() })
-          )
-            .sort((a, b) => a.sort - b.sort)
-            .map(({ value }) => value);
-          updateDisplayState();
-        });
-
-        updateBinding(Bindings.Actions.Submit, () => {
-          const word = GameState.currentWord;
-
-          if (GameState.notify) {
-            GameState.currentWord = "";
-            GameState.feedback = "";
-            GameState.notify = undefined;
-          } else {
-            const key = crypto.randomUUID();
-            if (GameState.game.wordlist.includes(word)) {
-              if (GameState.words.includes(word)) {
-                GameState.feedback = "Word already found.";
-              } else {
-                const isPangram = GameState.game.letters
-                  .split("")
-                  .every((letter) => word.includes(letter));
-                const score =
-                  Constants.Maps.WordLengthScoreMap[word.length] +
-                  (isPangram ? 7 : 0);
-
-                GameState.score += score;
-                GameState.words.push(word);
-                GameState.words.sort();
-                GameState.feedback = `${
-                  isPangram ? "Pangram!" : "Nice!"
-                } (${score} point${score === 1 ? "" : "s"})`;
-              }
-            } else {
-              if (word.length <= 3) {
-                GameState.feedback = "Word is too short.";
-              } else if (!word.includes(GameState.game.center)) {
-                GameState.feedback = "Center letter is missing.";
-              } else {
-                GameState.feedback = "Not a valid word.";
-              }
+          for (const { Element } of Bindings.Interactive.Letters) {
+            if (e.key.toLowerCase() === Element.dataset.letter) {
+              onLetter(Element.dataset.letter);
             }
-            GameState.notify = key;
-            setTimeout(() => {
-              if (GameState.notify === key) {
-                GameState.currentWord = "";
-                GameState.feedback = "";
-                GameState.notify = undefined;
-                updateDisplayState();
-              }
-            }, Constants.Gameplay.FeedbackTimeout);
           }
-
-          updateDisplayState();
-        });
-      }
-
-      if (AppState.currentGameKey === AppState.now || GameState.archived) {
-        Bindings.Control.ArchiveButton.Element.setAttribute("disabled", true);
-        clearBinding(Bindings.Control.ArchiveButton, "click");
-      } else {
-        Bindings.Control.ArchiveButton.Element.removeAttribute("disabled");
-        updateBinding(
-          Bindings.Control.ArchiveButton,
-          () => {
-            if (
-              AppState.currentGameKey !== AppState.now &&
-              confirm(
-                `Archive game ${AppState.currentGameKey.replace(
-                  "+",
-                  " • "
-                )}? You'll see all the answers, but this can't be undone.`
-              )
-            ) {
-              archiveGame(AppState.currentGameKey);
-            }
-          },
-          "click"
-        );
+        }, "keydown");
       }
 
       Bindings.Dialogs.OverviewDialog.querySelectorAll(
@@ -1584,32 +1017,6 @@
 
     const updateControlButtonsOnce = () => {
       updateBinding(
-        Bindings.Control.MoreButton,
-        () => {
-          if (GameState.archived) {
-            Bindings.Dialogs.ArchivedDialog.showModal();
-          } else {
-            Bindings.Dialogs.MoreDialog.showModal();
-          }
-        },
-        "click"
-      );
-      updateBinding(
-        Bindings.Control.MoreCloseButton,
-        () => {
-          Bindings.Dialogs.MoreDialog.close();
-        },
-        "click"
-      );
-      updateBinding(
-        Bindings.Control.ArchivedCloseButton,
-        () => {
-          Bindings.Dialogs.ArchivedDialog.close();
-        },
-        "click"
-      );
-
-      updateBinding(
         Bindings.Control.OverviewButton,
         () => {
           Bindings.Dialogs.OverviewDialog.showModal();
@@ -1620,14 +1027,24 @@
         Bindings.Control.OverviewCloseButton,
         () => {
           Bindings.Dialogs.OverviewDialog.close();
+          Bindings.Control.OverviewButton.Element.blur();
         },
         "click"
       );
       updateBinding(
+        /** @todo */
         Bindings.Control.OverviewNewRandomGame,
         async () => {
-          await loadRandom();
-          Bindings.Dialogs.OverviewDialog.close();
+          const lengthString = prompt("How long should the word be? Choose any number greater than 4.", "5");
+
+          if (!lengthString || Number.isNaN(parseInt(lengthString))) {
+            alert("That isn't a valid length!");
+          } else {
+            const length = parseInt(lengthString);
+
+            await loadRandom(length);
+            Bindings.Dialogs.OverviewDialog.close();
+          }
         },
         "click"
       );
@@ -1648,7 +1065,7 @@
       updateControlButtonsOnce();
 
       Object.entries(GameHistory).forEach(([key, game]) => {
-        if (key !== AppState.now && !isNaN(key.charAt(0))) {
+        if (key !== AppState.now && !key.includes("+")) {
           archiveGame(key);
         }
       });

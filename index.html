@@ -313,8 +313,10 @@
       .button-row {
         display: flex;
         flex-flow: row nowrap;
-        justify-content: center;
+        justify-content: stretch;
         gap: 0.375rem;
+
+        padding-inline: 1rem;
       }
 
       button.letter {
@@ -322,8 +324,9 @@
         border: none;
         outline: none;
 
-        min-width: 2rem;
         height: 4rem;
+        padding: 0.25rem 0.5rem;
+        flex: 1;
         
         display: grid;
         place-content: center;
@@ -341,6 +344,10 @@
       }
       :where(button.letter) {
         background-color: var(--light-gray);
+      }
+
+      button#letter-Enter {
+        font-size: 0.85rem;
       }
 
       div#actions {

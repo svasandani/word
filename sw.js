@@ -1,4 +1,4 @@
-const CACHE_NAME = "bee_Site";
+const CACHE_NAME = "word_Site";
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();

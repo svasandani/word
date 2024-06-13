@@ -256,6 +256,7 @@
 
         overflow: scroll;
         position: relative;
+        scroll-behavior: smooth;
       }
 
       .attempt-row {
@@ -281,10 +282,10 @@
         font-weight: bold;
       }
       .attempt-row.fade-in .attempt-letter {
-        animation: fade-in 100ms ease-out 1 forwards;
+        animation: fade-in 150ms ease-out 1 forwards;
       }
       .attempt-row.pulse .attempt-letter.latest {
-        animation: pulse 100ms ease-in-out 1 forwards;
+        animation: pulse 150ms ease-out 1 forwards;
       }
 
       #archive-dialog {
@@ -310,9 +311,10 @@
         max-width: 30rem;
         justify-self: center;
         padding-bottom: 2rem;
+        overflow: scroll;
 
         display: grid;
-        grid-template-rows: repeat(3, 1fr);
+        grid-template-rows: auto repeat(3, 1fr);
         gap: 0.375rem;
       }
 
@@ -323,6 +325,9 @@
         gap: 0.375rem;
 
         padding-inline: 1rem;
+      }
+      div#buttons:has(#keyboard-input:focus) .button-row {
+        display: none;
       }
 
       button.letter {
@@ -360,18 +365,28 @@
         font-size: 0.85rem;
       }
 
-      div#actions {
-        display: flex;
-        align-items: flex-start;
-        justify-content: center;
+      #keyboard-input {
+        appearance: none;
+        border: none;
+        outline: none;
+        caret-color: transparent;
 
-        padding-top: 1rem;
+        padding: 0;
+        margin-inline: 1rem;
+        width: calc(100% - 2rem);
+        height: 2rem;
+
+        text-align: center;
+
+        background-color: var(--light-gray);
+        border-radius: 0.25rem;
+        color: var(--black);
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 500;
       }
-
-      div#actions-inner {
-        display: flex;
-        align-items: center;
-        gap: 2rem;
+      #keyboard-input:disabled {
+        opacity: 0.4;
       }
 
       #overview-daily-games,
@@ -394,7 +409,7 @@
         }
 
         50% {
-          transform: scale(1.05);
+          transform: scale(1.2);
         }
 
         100% {
@@ -476,6 +491,11 @@
           </dialog>
         </div>
         <div id="buttons">
+          <input
+            id="keyboard-input"
+            value="Click here to use your keyboard."
+            autocomplete="off"
+          />
           <div class="button-row">
             <button data-letter="q" class="letter letter-input">q</button>
             <button data-letter="w" class="letter letter-input">w</button>
@@ -622,6 +642,7 @@
       },
       WordLength: 5,
       Attempts: 6,
+      KeyboardInputPrompt: "Click here to use your keyboard.",
     };
 
     const AppState = {
@@ -655,6 +676,7 @@
         ArchiveDialog: document.getElementById("archive-dialog"),
       },
       Word: {
+        Container: document.getElementById("input"),
         Attempt1: document.getElementById("attempt-1"),
         Attempt2: document.getElementById("attempt-2"),
         Attempt3: document.getElementById("attempt-3"),
@@ -664,6 +686,14 @@
         ArchiveWord: document.getElementById("archive-word"),
       },
       Interactive: {
+        InputKeyup: {
+          Element: document.getElementById("keyboard-input"),
+          Listener: undefined,
+        },
+        InputInput: {
+          Element: document.getElementById("keyboard-input"),
+          Listener: undefined,
+        },
         Enter: {
           Element: document.getElementById("letter-Enter"),
           Listener: undefined,
@@ -904,6 +934,51 @@
           }
 
           Bindings.Word[`Attempt${i + 1}`].innerHTML = innerHTML;
+
+          /**
+           * Handle horizontal scrolling
+           */
+          const attemptLength = attempt?.length ?? 0;
+
+          const containerPaddingLeft =
+            parseFloat(getComputedStyle(Bindings.Word.Container).paddingLeft) ||
+            0;
+          const containerPaddingRight =
+            parseFloat(
+              getComputedStyle(Bindings.Word.Container).paddingRight
+            ) || 0;
+          const containerColumnGap =
+            parseFloat(getComputedStyle(Bindings.Word.Container).columnGap) ||
+            0;
+          const letterWidth =
+            parseFloat(
+              getComputedStyle(document.querySelector(".attempt-letter")).width
+            ) || 0;
+          const windowWidth = window.innerWidth;
+
+          /**
+           * The cursor (or last non-empty square) must be at least
+           * one padding's length away from the left edge.
+           */
+          const maxScrollLeft =
+            (attemptLength - 1) * (letterWidth + containerColumnGap);
+
+          /**
+           * The cursor must be at most one padding's length away
+           * from the right edge.
+           */
+          const lengthToCursor =
+            containerPaddingLeft +
+            (attemptLength - 1) * (letterWidth + containerColumnGap);
+          const overflow = lengthToCursor - windowWidth;
+          const minScrollLeft = overflow + letterWidth + containerPaddingRight;
+
+          const currentScrollLeft = Bindings.Word.Container.scrollLeft;
+          Bindings.Word.Container.scrollLeft = Math.max(
+            Math.min(currentScrollLeft, maxScrollLeft),
+            minScrollLeft
+          );
+          Bindings.Word.Container.scrollIntoView();
         } else {
           Bindings.Word[`Attempt${i + 1}`].innerHTML = new Array(
             GameState.length
@@ -1000,6 +1075,10 @@
       if (GameState.archived) {
         clearBinding(Bindings.Document, "keydown");
 
+        Bindings.Interactive.InputInput.Element.setAttribute("disabled", true);
+        clearBinding(Bindings.Interactive.InputKeyup, "keyup");
+        clearBinding(Bindings.Interactive.InputInput, "input");
+
         Bindings.Interactive.Enter.Element.setAttribute("disabled", true);
         clearBinding(Bindings.Interactive.Enter);
 
@@ -1013,6 +1092,7 @@
           clearBinding(Binding);
         });
       } else {
+        Bindings.Interactive.InputInput.Element.removeAttribute("disabled");
         Bindings.Interactive.Enter.Element.removeAttribute("disabled");
         Bindings.Interactive.Delete.Element.removeAttribute("disabled");
 
@@ -1099,8 +1179,39 @@
         }
 
         updateBinding(
+          Bindings.Interactive.InputInput,
+          (e) => {
+            Bindings.Interactive.InputInput.Element.value =
+              Constants.KeyboardInputPrompt;
+
+            if (e.inputType === "deleteContentBackward") return onDelete();
+
+            for (const { Element } of Bindings.Interactive.Letters) {
+              if (
+                e.data?.toLowerCase() === Element.dataset.letter &&
+                !(e.altKey || e.ctrlKey || e.metaKey || e.shiftKey)
+              ) {
+                onLetter(Element.dataset.letter);
+              }
+            }
+          },
+          "input"
+        );
+
+        updateBinding(
+          Bindings.Interactive.InputKeyup,
+          (e) => {
+            if (e.key === "Enter") return onEnter();
+          },
+          "keyup"
+        );
+
+        updateBinding(
           Bindings.Document,
           (e) => {
+            if (Bindings.Interactive.InputInput.Element.contains(e.target))
+              return;
+
             if (e.key === "Enter") onEnter();
             if (e.key === "Backspace") onDelete();
 

@@ -936,51 +936,6 @@
           }
 
           Bindings.Word[`Attempt${i + 1}`].innerHTML = innerHTML;
-
-          /**
-           * Handle horizontal scrolling
-           */
-          const attemptLength = attempt?.length ?? 0;
-
-          const containerPaddingLeft =
-            parseFloat(getComputedStyle(Bindings.Word.Container).paddingLeft) ||
-            0;
-          const containerPaddingRight =
-            parseFloat(
-              getComputedStyle(Bindings.Word.Container).paddingRight
-            ) || 0;
-          const containerColumnGap =
-            parseFloat(getComputedStyle(Bindings.Word.Container).columnGap) ||
-            0;
-          const letterWidth =
-            parseFloat(
-              getComputedStyle(document.querySelector(".attempt-letter")).width
-            ) || 0;
-          const windowWidth = window.innerWidth;
-
-          /**
-           * The cursor (or last non-empty square) must be at least
-           * one padding's length away from the left edge.
-           */
-          const maxScrollLeft =
-            (attemptLength - 1) * (letterWidth + containerColumnGap);
-
-          /**
-           * The cursor must be at most one padding's length away
-           * from the right edge.
-           */
-          const lengthToCursor =
-            containerPaddingLeft +
-            (attemptLength - 1) * (letterWidth + containerColumnGap);
-          const overflow = lengthToCursor - windowWidth;
-          const minScrollLeft = overflow + letterWidth + containerPaddingRight;
-
-          const currentScrollLeft = Bindings.Word.Container.scrollLeft;
-          Bindings.Word.Container.scrollLeft = Math.max(
-            Math.min(currentScrollLeft, maxScrollLeft),
-            minScrollLeft
-          );
-          Bindings.Word.Container.scrollIntoView();
         } else {
           Bindings.Word[`Attempt${i + 1}`].innerHTML = new Array(
             GameState.length
@@ -1081,6 +1036,47 @@
         attemptLetter.innerHTML = "";
         attemptLetter.classList.remove("pulse");
       }
+
+      /**
+       * Handle horizontal scrolling
+       */
+      const attemptLength = GameState.attempts[attempt]?.length ?? 0;
+
+      const containerPaddingLeft =
+        parseFloat(getComputedStyle(Bindings.Word.Container).paddingLeft) || 0;
+      const containerPaddingRight =
+        parseFloat(getComputedStyle(Bindings.Word.Container).paddingRight) || 0;
+      const containerColumnGap =
+        parseFloat(getComputedStyle(Bindings.Word.Container).columnGap) || 0;
+      const letterWidth =
+        parseFloat(
+          getComputedStyle(document.querySelector(".attempt-letter")).width
+        ) || 0;
+      const windowWidth = window.innerWidth;
+
+      /**
+       * The cursor (or last non-empty square) must be at least
+       * one padding's length away from the left edge.
+       */
+      const maxScrollLeft =
+        (attemptLength - 1) * (letterWidth + containerColumnGap);
+
+      /**
+       * The cursor must be at most one padding's length away
+       * from the right edge.
+       */
+      const lengthToCursor =
+        containerPaddingLeft +
+        (attemptLength - 1) * (letterWidth + containerColumnGap);
+      const overflow = lengthToCursor - windowWidth;
+      const minScrollLeft = overflow + letterWidth + containerPaddingRight;
+
+      const currentScrollLeft = Bindings.Word.Container.scrollLeft;
+      Bindings.Word.Container.scrollLeft = Math.max(
+        Math.min(currentScrollLeft, maxScrollLeft),
+        minScrollLeft
+      );
+      Bindings.Word.Container.scrollIntoView();
 
       save();
     };

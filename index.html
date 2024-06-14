@@ -292,17 +292,20 @@
         margin: 0;
 
         position: absolute;
-        top: 50%;
+        top: 1rem;
         left: 50%;
-        transform: translate(-50%, -50%);
+        transform: translateX(-50%);
 
         background-color: var(--blue);
 
-        padding: 2rem;
-        border-radius: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
       }
       #archive-dialog[open] {
         animation: fade-in 300ms ease-out 1 forwards;
+      }
+      #archive-word {
+        text-transform: uppercase;
       }
 
       div#buttons {
@@ -402,6 +405,7 @@
       @keyframes fade-in {
         from {
           opacity: 0;
+          transform: translateX(-50%) translateY(-1rem);
         }
       }
 
@@ -489,7 +493,7 @@
             <div class="attempt-letter"></div>
           </div>
           <dialog id="archive-dialog">
-            <span>The word was <strong id="archive-word"></strong>!</span>
+            <span><strong id="archive-word"></strong></span>
           </dialog>
         </div>
         <div id="buttons">
@@ -1089,7 +1093,10 @@
         const attemptLetter = attemptLetters[i];
 
         const shrinkAnimation = attemptLetter.animate(
-          [{ transform: "scaleX(1)" }, { transform: "scaleX(0)" }],
+          [
+            { transform: "perspective(12rem) rotate3d(0, 1, 0, 0deg)" },
+            { transform: "perspective(12rem) rotate3d(0, 1, 0, 90deg)" },
+          ],
           { duration: 150, easing: "ease-out", fill: "forwards" }
         );
         await shrinkAnimation.finished;
@@ -1098,11 +1105,39 @@
           getWordLetterState(word, letters, i)
         );
         const growAnimation = attemptLetter.animate(
-          [{ transform: "scaleX(0)" }, { transform: "scaleX(1)" }],
+          [
+            { transform: "perspective(12rem) rotate3d(0, 1, 0, 270deg)" },
+            { transform: "perspective(12rem) rotate3d(0, 1, 0, 360deg)" },
+          ],
           { duration: 200, easing: "ease-out", fill: "forwards" }
         );
         if (i === attemptLetters.length - 1) {
           await growAnimation.finished;
+        }
+      }
+
+      if (GameState.attempts[attempt - 1] === word) {
+        for (let i = 0; i < attemptLetters.length; i++) {
+          const attemptLetter = attemptLetters[i];
+
+          const jumpAnimation = attemptLetter.animate(
+            [
+              { transform: "translateY(0)" },
+              { transform: "translateY(-1rem)" },
+            ],
+            { duration: 125, easing: "ease-out", fill: "forwards" }
+          );
+          await jumpAnimation.finished;
+          const fallAnimation = attemptLetter.animate(
+            [
+              { transform: "translateY(-1rem)" },
+              { transform: "translateY(0rem)" },
+            ],
+            { duration: 75, easing: "ease-out", fill: "forwards" }
+          );
+          if (i === attemptLetters.length - 1) {
+            await fallAnimation.finished;
+          }
         }
       }
 

@@ -281,11 +281,8 @@
         font-size: 1.5rem;
         font-weight: bold;
       }
-      .attempt-row.fade-in .attempt-letter {
-        animation: fade-in 150ms ease-out 1 forwards;
-      }
-      .attempt-row.pulse .attempt-letter.latest {
-        animation: pulse 150ms ease-out 1 forwards;
+      .attempt-letter.pulse {
+        animation: pulse 200ms ease-out 1 forwards;
       }
 
       #archive-dialog {
@@ -303,6 +300,9 @@
 
         padding: 2rem;
         border-radius: 0.5rem;
+      }
+      #archive-dialog[open] {
+        animation: fade-in 300ms ease-out 1 forwards;
       }
 
       div#buttons {
@@ -350,6 +350,7 @@
       }
       button.letter:disabled {
         opacity: 0.4;
+        transition: 300ms ease-in;
       }
       button.letter-input {
         text-transform: uppercase;
@@ -387,6 +388,7 @@
       }
       #keyboard-input:disabled {
         opacity: 0.4;
+        transition: 300ms ease-in;
       }
 
       #overview-daily-games,
@@ -399,7 +401,7 @@
 
       @keyframes fade-in {
         from {
-          background-color: transparent;
+          opacity: 0;
         }
       }
 
@@ -928,9 +930,9 @@
           let innerHTML = "";
 
           for (let j = 0; j < GameState.length; j++) {
-            innerHTML += `<div class="attempt-letter ${
-              attempt?.length === j + 1 ? "latest" : ""
-            }">${attempt?.charAt(j) ?? ""}</div>`;
+            innerHTML += `<div class="attempt-letter">${
+              attempt?.charAt(j) ?? ""
+            }</div>`;
           }
 
           Bindings.Word[`Attempt${i + 1}`].innerHTML = innerHTML;
@@ -1061,6 +1063,56 @@
       save();
     };
 
+    const updateLetter = (attempt, char, letter) => {
+      const attemptRow = Bindings.Word[`Attempt${attempt + 1}`];
+      const attemptLetter = attemptRow.querySelector(
+        `.attempt-letter:nth-child(${char + 1})`
+      );
+
+      if (!attemptLetter)
+        throw new Error(
+          `Attempt ${attempt} char ${char} not found when trying to update to ${letter}`
+        );
+
+      if (letter) {
+        attemptLetter.innerHTML = letter;
+        attemptLetter.classList.add("pulse");
+      } else {
+        attemptLetter.innerHTML = "";
+        attemptLetter.classList.remove("pulse");
+      }
+
+      save();
+    };
+
+    const updateAttempt = async (word, attempt, letters) => {
+      const attemptRow = Bindings.Word[`Attempt${attempt}`];
+      const attemptLetters = attemptRow.querySelectorAll(".attempt-letter");
+
+      for (let i = 0; i < attemptLetters.length; i++) {
+        const attemptLetter = attemptLetters[i];
+
+        const shrinkAnimation = attemptLetter.animate(
+          [{ transform: "scaleX(1)" }, { transform: "scaleX(0)" }],
+          { duration: 150, easing: "ease-out", fill: "forwards" }
+        );
+        await shrinkAnimation.finished;
+        attemptLetters[i].classList.add(
+          "submitted",
+          getWordLetterState(word, letters, i)
+        );
+        const growAnimation = attemptLetter.animate(
+          [{ transform: "scaleX(0)" }, { transform: "scaleX(1)" }],
+          { duration: 200, easing: "ease-out", fill: "forwards" }
+        );
+        if (i === attemptLetters.length - 1) {
+          await growAnimation.finished;
+        }
+      }
+
+      save();
+    };
+
     const clearBinding = (binding, event = "pointerdown") => {
       binding.Element.removeEventListener("pointerdown", binding.Listener);
     };
@@ -1096,7 +1148,7 @@
         Bindings.Interactive.Enter.Element.removeAttribute("disabled");
         Bindings.Interactive.Delete.Element.removeAttribute("disabled");
 
-        const onEnter = () => {
+        const onEnter = async () => {
           const attempt = GameState.attempts[GameState.activeAttempt];
 
           if (
@@ -1104,18 +1156,23 @@
             attempt.length === GameState.length &&
             GameDict.get(GameState.length)?.includes(attempt)
           ) {
-            const Binding =
-              Bindings.Word[`Attempt${GameState.activeAttempt + 1}`];
-            Binding.classList.add("fade-in");
-            setTimeout(() => Binding.classList.remove("fade-in"), 100);
-
             GameState.activeAttempt = GameState.activeAttempt + 1;
 
             if (
               GameState.activeAttempt >= Constants.Attempts ||
               GameState.attempts.includes(GameState.word)
-            )
+            ) {
               GameState.archived = true;
+              await updateAttempt(
+                GameState.word,
+                GameState.activeAttempt,
+                attempt
+              );
+              updateDisplayState();
+            } else {
+              updateAttempt(GameState.word, GameState.activeAttempt, attempt);
+              updateButtonBindings();
+            }
           } else {
             Bindings.Word[`Attempt${GameState.activeAttempt + 1}`].animate(
               new Array(9).fill(0).map((_, index) => ({
@@ -1125,9 +1182,9 @@
               })),
               { duration: 360, easing: "linear", fill: "forwards" }
             );
-          }
 
-          updateDisplayState();
+            updateDisplayState();
+          }
         };
         updateBinding(Bindings.Interactive.Enter, onEnter);
 
@@ -1139,9 +1196,9 @@
               0,
               attempt.length - 1
             );
-          }
 
-          updateDisplayState();
+            updateLetter(GameState.activeAttempt, attempt.length - 1);
+          }
         };
         updateBinding(Bindings.Interactive.Delete, onDelete);
 
@@ -1149,16 +1206,11 @@
           const attempt = GameState.attempts[GameState.activeAttempt];
 
           if (!attempt || attempt.length < GameState.length) {
-            const Binding =
-              Bindings.Word[`Attempt${GameState.activeAttempt + 1}`];
-            Binding.classList.add("pulse");
-            setTimeout(() => Binding.classList.remove("pulse"), 100);
-
             GameState.attempts[GameState.activeAttempt] =
               (attempt ?? "") + letter;
-          }
 
-          updateDisplayState();
+            updateLetter(GameState.activeAttempt, attempt?.length ?? 0, letter);
+          }
         };
         for (const Binding of Bindings.Interactive.Letters) {
           Binding.Element.classList.remove("green");

@@ -108,6 +108,25 @@
         flex-flow: column nowrap;
       }
 
+      .one-pane {
+        height: 100%;
+        overflow-y: auto;
+
+        display: grid;
+        grid-template-columns: 1fr;
+        justify-content: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+      }
+      .one-pane-two-pane {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+      .one-pane-two-pane.centered {
+        align-items: center;
+      }
+
       .two-pane {
         height: 100%;
         overflow-y: auto;
@@ -117,18 +136,41 @@
         gap: 1rem;
         padding: 1rem;
       }
-      .two-pane-pane {
+
+      .pane {
         display: flex;
         flex-flow: column nowrap;
         gap: 1rem;
       }
-      .two-pane-pane-inner span {
+      .pane .card {
         border-radius: 0.5rem;
         padding: 0.375rem 0.5rem;
         white-space: nowrap;
       }
-      .two-pane-pane-inner .button {
+      .pane .button {
         width: 100%;
+      }
+
+      .info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: stretch;
+        gap: 0.25rem 1rem;
+      }
+      .info > *:nth-child(2n) {
+        text-align: right;
+      }
+      .info > *:nth-child(2n + 1) {
+        text-align: left;
+      }
+
+      .divider {
+        display: block;
+        grid-column: 1 / -1;
+
+        height: 1px;
+        background-color: currentColor;
+        margin-block: 2px;
       }
 
       .button {
@@ -161,6 +203,13 @@
         padding: 0;
       }
 
+      .checkbox {
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
       .strong {
         font-weight: bold;
       }
@@ -191,6 +240,14 @@
       }
       .yellow-color {
         color: var(--yellow);
+      }
+
+      .sticky {
+        position: sticky;
+        top: 0;
+      }
+      .hidden {
+        display: none;
       }
 
       .nav {
@@ -446,7 +503,23 @@
           </button>
         </div>
         <h1>WORD</h1>
-        <div class="nav-buttons right"></div>
+        <div class="nav-buttons right">
+          <button id="more-button" class="accent button">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 15 15"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M2.34375 1.875V8.90625C2.34375 9.27921 2.49191 9.6369 2.75563 9.90062C3.01935 10.1643 3.37704 10.3125 3.75 10.3125H5.15625M2.34375 1.875H1.40625M2.34375 1.875H12.6562M5.15625 10.3125H9.84375M5.15625 10.3125L4.53125 12.1875M12.6562 1.875H13.5938M12.6562 1.875V8.90625C12.6562 9.27921 12.5081 9.6369 12.2444 9.90062C11.9806 10.1643 11.623 10.3125 11.25 10.3125H9.84375M9.84375 10.3125L10.4688 12.1875M4.53125 12.1875H10.4688M4.53125 12.1875L4.21875 13.125M10.4688 12.1875L10.7812 13.125M4.6875 7.5L6.5625 5.625L7.905 6.9675C8.53575 6.06206 9.3576 5.30614 10.3125 4.75313"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
       </nav>
       <section id="game">
         <div id="input">
@@ -576,7 +649,7 @@
         </button>
       </div>
       <div class="two-pane">
-        <div class="two-pane-pane">
+        <div class="pane">
           <div class="icon-group">
             <svg
               width="22"
@@ -594,9 +667,9 @@
             </svg>
             <strong>Daily games</strong>
           </div>
-          <div id="overview-daily-games" class="two-pane-pane-inner"></div>
+          <div id="overview-daily-games"></div>
         </div>
-        <div class="two-pane-pane">
+        <div class="pane">
           <div class="icon-group">
             <svg
               width="23"
@@ -615,7 +688,7 @@
             <strong>Random games</strong>
           </div>
           <span>Want more than one game a day? Try a random game!</span>
-          <div id="overview-random-games-container" class="two-pane-pane-inner">
+          <div id="overview-random-games-container">
             <button
               id="overview-new-random-game"
               class="small light-gray button"
@@ -640,6 +713,100 @@
         </div>
       </div>
     </dialog>
+
+    <dialog id="more-dialog" class="dialog">
+      <div class="nav">
+        <h1>Analysis</h1>
+        <button id="more-close-button" class="light-gray button">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 15L15 5M5 5L15 15"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+      </div>
+      <div class="one-pane">
+        <div id="more-pane" class="pane">
+          <div class="one-pane-two-pane">
+            <div class="pane">
+              <div class="icon-group">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                <strong>Your guesses</strong>
+              </div>
+            </div>
+            <div class="pane">
+              <div class="icon-group">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                <strong>Analysis</strong>
+              </div>
+            </div>
+          </div>
+          <div id="more-no-analysis" class="one-pane-two-pane">
+            <div id="more-no-analysis-guesses" class="pane"></div>
+            <div class="pane">
+              <button id="more-run" class="small light-gray button">
+                <span>Run analysis</span>
+                <svg
+                  width="15"
+                  height="15"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path
+                    d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div id="more-panel" class="one-pane-two-pane centered">
+            <span>Skill score: <strong id="more-score"></strong>/100</span>
+            <label id="more-strict" class="checkbox">
+              <input id="more-strict-checkbox" type="checkbox" />
+              <span>Strict mode</span>
+            </label>
+          </div>
+          <div id="more-analysis" class="pane"></div>
+        </div>
+      </div>
+    </dialog>
   </body>
   <script id="variables">
     const Constants = {
@@ -649,6 +816,8 @@
       WordLength: 5,
       Attempts: 6,
       KeyboardInputPrompt: "Click here to use your keyboard.",
+      Colors: ["green", "yellow", "gray"],
+      BotTopChoices: 10,
     };
 
     const AppState = {
@@ -674,12 +843,29 @@
           Element: document.getElementById("overview-new-random-game"),
           Listener: undefined,
         },
+        MoreButton: {
+          Element: document.getElementById("more-button"),
+          Listener: undefined,
+        },
+        MoreCloseButton: {
+          Element: document.getElementById("more-close-button"),
+          Listener: undefined,
+        },
+        MoreAnalysis: {
+          Element: document.getElementById("more-run"),
+          Listener: undefined,
+        },
+        MoreStrictModeCheckbox: {
+          Element: document.getElementById("more-strict-checkbox"),
+          Listener: undefined,
+        },
       },
       Dialogs: {
         OverviewDialog: document.getElementById("overview-dialog"),
         OverviewDailyGames: document.getElementById("overview-daily-games"),
         OverviewRandomGames: document.getElementById("overview-random-games"),
         ArchiveDialog: document.getElementById("archive-dialog"),
+        MoreDialog: document.getElementById("more-dialog"),
       },
       Word: {
         Container: document.getElementById("input"),
@@ -690,6 +876,14 @@
         Attempt5: document.getElementById("attempt-5"),
         Attempt6: document.getElementById("attempt-6"),
         ArchiveWord: document.getElementById("archive-word"),
+      },
+      Analysis: {
+        NoAnalysis: document.getElementById("more-no-analysis"),
+        NoAnalysisGuesses: document.getElementById("more-no-analysis-guesses"),
+        Analysis: document.getElementById("more-analysis"),
+        Panel: document.getElementById("more-panel"),
+        Score: document.getElementById("more-score"),
+        StrictMode: document.getElementById("more-strict"),
       },
       Interactive: {
         InputKeyup: {
@@ -765,6 +959,16 @@
             view.getUint8(4)) %
         dict.length;
 
+      performance.mark("generate-end");
+      const measure = performance.measure(
+        "generate-measure",
+        "generate-start",
+        "generate-end"
+      );
+      console.log(
+        `Took ${measure.duration.toFixed(2)}ms to generate latest game.`
+      );
+
       return dict[index];
     };
   </script>
@@ -781,7 +985,7 @@
         /**
          * Always return green if the letter is right
          */
-        return "green";
+        return 0;
       } else {
         /**
          * We need to be more careful if it's not an
@@ -809,8 +1013,8 @@
          * than the difference between these green letters and letters in the word
          */
         return lettersInWord - greenLetters - lettersToLeftInAttempt > 0
-          ? "yellow"
-          : "gray";
+          ? 1
+          : 2;
       }
     };
 
@@ -825,9 +1029,9 @@
             if (attemptLetter === letter) {
               const state = getWordLetterState(word, attempt, i);
 
-              if (state === "green") return "green";
-              if (state === "yellow") finalState = "yellow";
-              if (state === "gray" && finalState === "") finalState = "gray";
+              if (state === 0) return "green";
+              if (state === 1) finalState = "yellow";
+              if (state === 2 && finalState === "") finalState = "gray";
             }
           }
         }
@@ -923,11 +1127,11 @@
             .split("")
             .map(
               (letter, position) =>
-                `<div class="attempt-letter ${getWordLetterState(
-                  GameState.word,
-                  attempt,
-                  position
-                )}">${letter}</div>`
+                `<div class="attempt-letter ${
+                  Constants.Colors[
+                    getWordLetterState(GameState.word, attempt, position)
+                  ]
+                }">${letter}</div>`
             )
             .join("");
         } else if (i === GameState.activeAttempt) {
@@ -1019,6 +1223,8 @@
 
       updateButtonBindings();
 
+      updateAnalysis(!!Bindings.Control.MoreStrictModeCheckbox.Element.checked);
+
       save();
     };
 
@@ -1102,7 +1308,7 @@
         await shrinkAnimation.finished;
         attemptLetters[i].classList.add(
           "submitted",
-          getWordLetterState(word, letters, i)
+          Constants.Colors[getWordLetterState(word, letters, i)]
         );
         const growAnimation = attemptLetter.animate(
           [
@@ -1156,6 +1362,8 @@
 
     const updateButtonBindings = () => {
       if (GameState.archived) {
+        Bindings.Control.MoreButton.Element.removeAttribute("disabled");
+
         clearBinding(Bindings.Document, "keydown");
 
         Bindings.Interactive.InputInput.Element.setAttribute("disabled", true);
@@ -1169,12 +1377,17 @@
         clearBinding(Bindings.Interactive.Delete);
 
         Bindings.Interactive.Letters.forEach((Binding) => {
+          Binding.Element.classList.remove("green");
+          Binding.Element.classList.remove("yellow");
+          Binding.Element.classList.remove("gray");
+
           if (GameState.word.includes(Binding.Element.dataset.letter))
             Binding.Element.classList.add("green");
           Binding.Element.setAttribute("disabled", true);
           clearBinding(Binding);
         });
       } else {
+        Bindings.Control.MoreButton.Element.setAttribute("disabled", true);
         Bindings.Interactive.InputInput.Element.removeAttribute("disabled");
         Bindings.Interactive.Enter.Element.removeAttribute("disabled");
         Bindings.Interactive.Delete.Element.removeAttribute("disabled");
@@ -1372,6 +1585,325 @@
           }
         },
         "click"
+      );
+      updateBinding(
+        Bindings.Control.MoreButton,
+        () => {
+          Bindings.Dialogs.MoreDialog.showModal();
+        },
+        "click"
+      );
+      updateBinding(
+        Bindings.Control.MoreCloseButton,
+        () => {
+          Bindings.Dialogs.MoreDialog.close();
+          Bindings.Control.MoreButton.Element.blur();
+        },
+        "click"
+      );
+      updateBinding(
+        Bindings.Control.MoreAnalysis,
+        async () => {
+          analyze();
+        },
+        "click"
+      );
+      updateBinding(
+        Bindings.Control.MoreStrictModeCheckbox,
+        async () => {
+          updateDisplayState();
+        },
+        "change"
+      );
+    };
+
+    const updateAnalysis = (strictMode = false) => {
+      const key =
+        strictMode && GameState.strictAnalysis ? "strictAnalysis" : "analysis";
+
+      if (GameState[key]) {
+        if (GameState.strictAnalysis)
+          Bindings.Analysis.StrictMode.classList.remove("hidden");
+        else Bindings.Analysis.StrictMode.classList.add("hidden");
+        Bindings.Analysis.Panel.classList.remove("hidden");
+        Bindings.Analysis.NoAnalysis.classList.add("hidden");
+
+        Bindings.Analysis.Score.innerHTML = Math.floor(
+          GameState[key].reduce(
+            (score, analysis, index) =>
+              index === 0
+                ? score
+                : score +
+                  convertHeuristicToScore(
+                    analysis.attempt.heuristic,
+                    analysis.bestHeuristic,
+                    analysis.worstHeuristic
+                  ),
+            0
+          ) /
+            (Constants.Attempts - 1)
+        );
+
+        Bindings.Analysis.NoAnalysisGuesses.innerHTML = "";
+        Bindings.Analysis.Analysis.innerHTML = GameState[key].reduce(
+          (innerHTML, analysis, index) =>
+            (innerHTML += `<span class="divider"></span>
+            <div class="one-pane-two-pane">
+              <div class="pane">
+                <strong>Guess ${index + 1}</strong>
+                <div class="blue sticky info card">
+                  <span class="strong">${analysis.attempt.word}</span>
+                  <span class="strong">${convertHeuristicToScore(
+                    analysis.attempt.heuristic,
+                    analysis.bestHeuristic,
+                    analysis.worstHeuristic
+                  )}</span>
+                  <span class="divider"></span><span class="hidden"></span>
+                  <span>Partitions</span>
+                  <span>${analysis.attempt.size}</span>
+                  <span>Expected words</span>
+                  <span>${analysis.attempt.expectedGroupLength.toFixed(
+                    1
+                  )}</span>
+                  <span>Actual words</span>
+                  <span>${analysis.attempt.actualGroupLength}</span>
+                  <span>Probability</span>
+                  <span>${(100 * analysis.attempt.guessProbability).toFixed(
+                    0
+                  )}%</span>
+                </div>
+              </div>
+              <div class="pane">
+                <strong>Top choices</strong>
+                ${
+                  analysis.topChoices.length > 0
+                    ? analysis.topChoices.reduce(
+                        (innerHTML, choice) =>
+                          (innerHTML += `<div class="light-gray info card">
+                    <span class="strong">${choice.word}</span>
+                    <span class="strong">${convertHeuristicToScore(
+                      choice.heuristic,
+                      analysis.bestHeuristic,
+                      analysis.worstHeuristic
+                    )}</span>
+                    <span class="divider"></span><span class="hidden"></span>
+                    <span>Partitions</span>
+                    <span>${choice.size}</span>
+                    <span>Expected words</span>
+                    <span>${choice.expectedGroupLength.toFixed(1)}</span>
+                    <span>Actual words</span>
+                    <span>${choice.actualGroupLength}</span>
+                    <span>Probability</span>
+                    <span>${(100 * choice.guessProbability).toFixed(0)}%</span>
+                  </div>`),
+                        ""
+                      )
+                    : "<span>We didn't calculate the top choices for this guess.</span>"
+                }
+              </div>
+            </div>`),
+          ""
+        );
+      } else {
+        Bindings.Analysis.Panel.classList.add("hidden");
+        Bindings.Analysis.NoAnalysis.classList.remove("hidden");
+
+        Bindings.Analysis.Analysis.innerHTML = "";
+        Bindings.Analysis.NoAnalysisGuesses.innerHTML =
+          GameState.attempts.reduce(
+            (innerHTML, attempt) =>
+              (innerHTML += `<div class="strong blue card">${attempt}</div>`),
+            ""
+          );
+      }
+    };
+  </script>
+  <script id="bot">
+    const convertHeuristicToScore = (
+      heuristic,
+      bestHeuristic,
+      worstHeuristic
+    ) => {
+      if (
+        heuristic === 0 ||
+        worstHeuristic === 0 ||
+        worstHeuristic - bestHeuristic === 0
+      )
+        return 100;
+      const delta =
+        (heuristic - bestHeuristic) / (worstHeuristic - bestHeuristic);
+      const curvedDelta = Math.sqrt(delta);
+      return Math.floor(100 * (1 - curvedDelta));
+    };
+
+    const codeAttempt = (word, attempt) => {
+      let code = "";
+      for (let i = 0; i < attempt.length; i++) {
+        code += getWordLetterState(word, attempt, i);
+      }
+      return code;
+    };
+
+    const filterDictByAttemptAndCode = (dict, attempt, code) => {
+      if (attempt.length !== code.length)
+        throw new Error("Attempt and code must have same length!");
+
+      return dict.filter((word) => code === codeAttempt(word, attempt));
+    };
+
+    const partitionDictIntoGroupsByAttempt = (dict, attempt) => {
+      const groups = new Map();
+
+      dict.forEach((word) => {
+        const code = codeAttempt(word, attempt);
+        if (groups.has(code)) {
+          groups.get(code).push(word);
+        } else {
+          groups.set(code, [word]);
+        }
+      });
+
+      return groups;
+    };
+
+    const analyzeAttempt = (choiceDict, wordDict, attempt, targetWord) => {
+      let worstHeuristic = 0;
+      let bestHeuristic = Number.MAX_SAFE_INTEGER;
+
+      const choiceRankings = choiceDict.map((word) => {
+        const code = codeAttempt(targetWord, word);
+        const groups = partitionDictIntoGroupsByAttempt(wordDict, word);
+        const inWordDict = wordDict.includes(word);
+        const heuristic =
+          (wordDict.length - (inWordDict ? 1 : 0)) / (groups.size || 1);
+
+        if (heuristic < bestHeuristic) bestHeuristic = heuristic;
+        if (heuristic > worstHeuristic) worstHeuristic = heuristic;
+
+        return {
+          word,
+          size: groups.size,
+          expectedGroupLength: wordDict.length / (groups.size || 1),
+          actualGroupLength: groups.get(code)?.length ?? 0,
+          inWordDict,
+          heuristic,
+          guessProbability: inWordDict ? 1 / wordDict.length : 0,
+        };
+      });
+
+      const topChoices = choiceRankings
+        .filter((word) => bestHeuristic >= 1 || word.heuristic < 1)
+        .sort((a, b) => a.heuristic - b.heuristic)
+        .slice(0, Constants.BotTopChoices);
+
+      const attemptCode = codeAttempt(targetWord, attempt);
+      const attemptGroups = partitionDictIntoGroupsByAttempt(wordDict, attempt);
+      const attemptInWordDict = wordDict.includes(attempt);
+      const attemptHeuristic =
+        (wordDict.length - (attemptInWordDict ? 1 : 0)) /
+        (attemptGroups.size || 1);
+
+      return {
+        attempt: {
+          word: attempt,
+          size: attemptGroups.size,
+          expectedGroupLength: wordDict.length / (attemptGroups.size || 1),
+          actualGroupLength: attemptGroups.get(attemptCode)?.length ?? 0,
+          inWordDict: attemptInWordDict,
+          heuristic: attemptHeuristic,
+          guessProbability: attemptInWordDict ? 1 / wordDict.length : 0,
+        },
+        topChoices,
+        bestHeuristic,
+        worstHeuristic,
+      };
+    };
+
+    const analyzeGame = async (strictMode = false) => {
+      const key = strictMode ? "strictAnalysis" : "analysis";
+      const dict = await loadDict(GameState.length);
+
+      GameState[key] = [];
+
+      let guessesAreStrictMode = true;
+      let carriedDict = dict;
+      for (
+        let i = 0;
+        i < Math.min(Constants.Attempts, GameState.attempts.length);
+        i++
+      ) {
+        const attempt = GameState.attempts[i];
+        const wordDict = strictMode ? carriedDict : dict;
+
+        guessesAreStrictMode &&= carriedDict.includes(attempt);
+
+        if (i === 0) {
+          const attemptGroups = partitionDictIntoGroupsByAttempt(
+            wordDict,
+            attempt
+          );
+          const attemptHeuristic = wordDict.length / (attemptGroups.size || 1);
+
+          GameState[key][i] = {
+            attempt: {
+              word: attempt,
+              size: attemptGroups.size,
+              expectedGroupLength: attemptHeuristic,
+              actualGroupLength:
+                attemptGroups.get(codeAttempt(GameState.word, attempt))
+                  ?.length ?? 0,
+              inWordDict: true,
+              heuristic: attemptHeuristic,
+              guessProbability: 1 / wordDict.length,
+            },
+            topChoices: [],
+            bestHeuristic: attemptHeuristic,
+            worstHeuristic: attemptHeuristic,
+          };
+        } else {
+          GameState[key][i] = analyzeAttempt(
+            wordDict,
+            carriedDict,
+            attempt,
+            GameState.word
+          );
+        }
+
+        carriedDict = filterDictByAttemptAndCode(
+          carriedDict,
+          GameState.attempts[i],
+          codeAttempt(GameState.word, attempt)
+        );
+      }
+
+      return guessesAreStrictMode;
+    };
+
+    const analyze = async () => {
+      if (!GameState.archived)
+        throw new Error("Cannot analyze incomplete game!");
+
+      performance.mark("analysis-start");
+
+      const guessesAreStrictMode = await analyzeGame(false);
+
+      if (guessesAreStrictMode) {
+        await analyzeGame(true);
+      }
+
+      console.log(GameState);
+      updateDisplayState();
+
+      performance.mark("analysis-end");
+      const measure = performance.measure(
+        "analysis-measure",
+        "analysis-start",
+        "analysis-end"
+      );
+      console.log(
+        `Took ${measure.duration.toFixed(2)}ms to analyze game ${
+          GameState.date
+        }.`
       );
     };
   </script>

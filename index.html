@@ -180,16 +180,17 @@
       details:not(.analysis-choice) > .divider {
         margin-block: calc(2px + 0.45rem);
       }
+      details:not(.analysis-choice)[open] > summary {
+        margin-bottom: 0.45rem;
+      }
 
       details summary {
         cursor: pointer;
+        list-style-type: none;
       }
 
       .analysis-choice.card {
         border-radius: 1rem;
-      }
-      .analysis-choice > summary {
-        list-style: none;
       }
       .analysis-choice[open] > summary {
         margin-bottom: 1rem;
@@ -200,9 +201,17 @@
         text-wrap: wrap;
       }
 
-      .dotlist {
+      .words {
         display: inline-flex;
         flex-flow: row nowrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        width: 100%;
+      }
+      .dotlist {
+        display: flex;
+        flex-flow: row wrap;
         align-items: center;
         gap: 0.2rem;
         padding-inline: 0.2rem;
@@ -1727,7 +1736,7 @@
                 <strong>Top choices</strong>
                 ${
                   index === 0
-                    ? "We don't calculate the top choices for the first guess, and it isn't included in your score. We also only show one dictionary partition – the one that you actually got."
+                    ? "We don't calculate the top choices for the first guess, and it isn't included in your score. We also only show one dictionary partition – the one containing this challenge's word."
                     : analysis.choices.reduce(
                         (innerHTML, choice) =>
                           (innerHTML += convertChoiceToDetails(
@@ -1788,7 +1797,7 @@
                 <details class="${
                   choice.code === code ? "light-green" : "light-gray"
                 } card">
-                  <summary><span class="dotlist">${code
+                  <summary><span class="words"><span class="dotlist">${code
                     .split("")
                     .reduce(
                       (innerHTML, letter, index) =>
@@ -1798,8 +1807,7 @@
                       ""
                     )}</span><strong class="right">${
                 words.length
-              }</strong></summary>
-                  <span class="divider"></span>
+              }</strong></span></summary>
                   <div class="wordlist">
                     ${words.join(", ")}
                   </div>

@@ -778,6 +778,25 @@
                 />
               </svg>
             </button>
+            <button
+              id="overview-new-seeded-game"
+              class="small light-gray button"
+            >
+              <span>New seeded game</span>
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 15 15"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M7.5 2.8125V12.1875M12.1875 7.5H2.8125"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
             <div id="overview-random-games"></div>
           </div>
         </div>
@@ -911,6 +930,10 @@
         },
         OverviewNewRandomGame: {
           Element: document.getElementById("overview-new-random-game"),
+          Listener: undefined,
+        },
+        OverviewNewSeededGame: {
+          Element: document.getElementById("overview-new-seeded-game"),
           Listener: undefined,
         },
         MoreButton: {
@@ -1131,12 +1154,30 @@
       updateDisplayState();
     };
 
-    const loadRandom = async (length) => {
-      const uuid = crypto.randomUUID();
+    const loadSeeded = async (seed, length) => {
+      const uuid = seed.slice(0, 6);
 
       const word = await generateGame(uuid, length);
 
-      const key = `${length ?? Constants.WordLength}+${uuid.slice(0, 6)}`;
+      const key = `${length ?? Constants.WordLength}+${uuid}`;
+
+      GameHistory[key] = {
+        date: key,
+        word,
+        length: word.length,
+        activeAttempt: 0,
+        attempts: [],
+      };
+
+      await switchGame(key);
+    };
+
+    const loadRandom = async (length) => {
+      const uuid = crypto.randomUUID().slice(0, 6);
+
+      const word = await generateGame(uuid, length);
+
+      const key = `${length ?? Constants.WordLength}+${uuid}`;
 
       GameHistory[key] = {
         date: key,
@@ -1666,6 +1707,38 @@
         "click"
       );
       updateBinding(
+        Bindings.Control.OverviewNewSeededGame,
+        async () => {
+          const lengthString = prompt(
+            "How long should the word be? Choose any number greater than 4.",
+            "5"
+          );
+
+          if (
+            !lengthString ||
+            Number.isNaN(parseInt(lengthString)) ||
+            parseInt(lengthString) < 4
+          ) {
+            return alert("That isn't a valid length!");
+          }
+
+          const length = parseInt(lengthString);
+
+          const seed = prompt(
+            "What seed should be used? It should be 6 characters exactly."
+          );
+
+          if (seed.length !== 6) {
+            return alert("That isn't a valid seed!");
+          }
+
+          await loadSeeded(seed, length);
+          Bindings.Dialogs.OverviewDialog.close();
+          Bindings.Control.OverviewButton.Element.blur();
+        },
+        "click"
+      );
+      updateBinding(
         Bindings.Control.MoreButton,
         () => {
           Bindings.Dialogs.MoreDialog.showModal();
@@ -1707,21 +1780,24 @@
         Bindings.Analysis.Panel.classList.remove("hidden");
         Bindings.Analysis.NoAnalysis.classList.add("hidden");
 
-        Bindings.Analysis.Score.innerHTML = Math.floor(
-          GameState[key].reduce(
-            (score, analysis, index) =>
-              index === 0
-                ? score
-                : score +
-                  convertHeuristicToScore(
-                    analysis.attempt.heuristic,
-                    analysis.bestHeuristic,
-                    analysis.worstHeuristic
-                  ),
-            0
-          ) /
-            (GameState[key].length - 1)
-        );
+        Bindings.Analysis.Score.innerHTML =
+          GameState[key].length > 1
+            ? Math.floor(
+                GameState[key].reduce(
+                  (score, analysis, index) =>
+                    index === 0
+                      ? score
+                      : score +
+                        convertHeuristicToScore(
+                          analysis.attempt.heuristic,
+                          analysis.bestHeuristic,
+                          analysis.worstHeuristic
+                        ),
+                  0
+                ) /
+                  (GameState[key].length - 1)
+              )
+            : 100;
 
         Bindings.Analysis.NoAnalysisGuesses.innerHTML = "";
         Bindings.Analysis.Analysis.innerHTML = GameState[key].reduce(
@@ -1736,7 +1812,7 @@
                 <strong>Top choices</strong>
                 ${
                   index === 0
-                    ? "We don't calculate the top choices for the first guess, and it isn't included in your score. We also only show one dictionary partition – the one containing this challenge's word."
+                    ? "Top choices aren't calculated for the first guess, and it isn't included in your score. Also, only one dictionary partition is displayed – the one containing this challenge's word."
                     : analysis.choices.reduce(
                         (innerHTML, choice) =>
                           (innerHTML += convertChoiceToDetails(
